@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A1.1 CPU Fundamentals — IBDP CS</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;background:#07091a;color:#e8eeff;}
+
+/* ── FULL SCREEN APP SHELL ── */
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:52px 1fr;height:100vh;width:100vw;}
+
+/* ── TOP BAR ── */
+.topbar{grid-column:1/-1;background:#0d1224;border-bottom:1px solid #1e2645;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:50;}
+.tb-left{display:flex;align-items:center;gap:12px;}
+.tb-badge{background:#00c8aa;color:#000;font-weight:800;font-size:10px;padding:3px 9px;border-radius:5px;letter-spacing:.5px;}
+.tb-title{font-weight:700;font-size:14px;color:#e8eeff;}
+.tb-sub{font-size:11px;color:#4a5580;margin-left:4px;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.student-badge{background:#1a2040;border:1px solid #2a3560;border-radius:7px;padding:5px 12px;font-size:12px;color:#8896cc;display:none;}
+.student-badge span{color:#00c8aa;font-weight:700;}
+
+/* ── SIDEBAR ── */
+.sidebar{background:#0d1224;border-right:1px solid #1e2645;display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-logo{padding:14px 16px 10px;border-bottom:1px solid #1a2240;}
+.sb-label{font-size:9px;font-weight:700;letter-spacing:2px;color:#3a4570;text-transform:uppercase;margin-bottom:6px;}
+.nav-items{flex:1;overflow-y:auto;padding:8px 0;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;color:#4a5580;font-size:13px;font-weight:500;}
+.nav-item:hover{background:#121830;color:#8896cc;border-left-color:#2a3560;}
+.nav-item.active{background:#121830;color:#00c8aa;border-left-color:#00c8aa;font-weight:700;}
+.nav-icon{font-size:15px;flex-shrink:0;width:20px;text-align:center;}
+.nav-badge{margin-left:auto;background:#1a2040;color:#4a5580;font-size:9px;font-weight:700;padding:2px 6px;border-radius:100px;}
+.nav-item.active .nav-badge{background:#00c8aa20;color:#00c8aa;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid #1a2240;font-size:11px;color:#3a4570;line-height:1.5;}
+
+/* ── MAIN PANEL ── */
+.main{background:#07091a;overflow:hidden;display:flex;flex-direction:column;}
+.panel{display:none;flex:1;flex-direction:column;height:100%;overflow:hidden;}
+.panel.active{display:flex;}
+
+/* ── PANEL HEADER ── */
+.panel-hd{padding:16px 24px 12px;border-bottom:1px solid #1e2645;flex-shrink:0;}
+.panel-title{font-size:17px;font-weight:800;color:#e8eeff;margin-bottom:2px;}
+.panel-sub{font-size:12px;color:#4a5580;}
+.panel-body{flex:1;overflow-y:auto;padding:20px 24px;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:#1e2645;border-radius:9px;}
+
+/* ── TOPIC NOTES PANEL ── */
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.topic-card{background:#0d1224;border:1px solid #1e2645;border-radius:12px;padding:16px;border-top:3px solid var(--c,#00c8aa);}
+.tc-label{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--c,#00c8aa);text-transform:uppercase;margin-bottom:5px;}
+.tc-title{font-size:14px;font-weight:800;color:#e8eeff;margin-bottom:6px;}
+.tc-body{font-size:12px;color:#6272a0;line-height:1.6;}
+.tc-items{margin-top:8px;display:flex;flex-direction:column;gap:4px;}
+.tc-item{font-size:11.5px;color:#8896cc;display:flex;gap:6px;align-items:flex-start;}
+.tc-dot{width:4px;height:4px;border-radius:50%;background:var(--c,#00c8aa);flex-shrink:0;margin-top:5px;}
+/* diagram */
+.diagram-box{background:#0a0d1e;border:1px solid #1e2645;border-radius:12px;padding:16px;margin-bottom:14px;}
+/* fde */
+.fde-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;}
+.fde-step{border-radius:10px;padding:14px;background:#0a0d1e;border:1px solid #1e2645;}
+.fde-num{font-size:9px;font-weight:700;letter-spacing:1.5px;margin-bottom:4px;}
+.fde-title{font-size:14px;font-weight:800;margin-bottom:8px;}
+.fde-pts{font-size:11px;color:#6272a0;line-height:1.7;}
+
+/* ── SPECIMEN PANEL ── */
+.spec-q{background:#0d1224;border:1px solid #1e2645;border-radius:12px;margin-bottom:14px;overflow:hidden;}
+.spec-hd{background:linear-gradient(90deg,#0d1a3a,#152040);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;}
+.spec-hd-title{font-size:12px;font-weight:700;color:#8896cc;}
+.spec-marks{background:#00c8aa;color:#000;font-weight:800;font-size:10px;padding:2px 9px;border-radius:100px;}
+.spec-body{padding:16px 18px;}
+.spec-ctx{background:#07091a;border-left:3px solid #00c8aa;border-radius:0 6px 6px 0;padding:10px 12px;font-size:11.5px;color:#4a5580;font-style:italic;margin-bottom:12px;}
+.spec-q-text{font-size:13px;font-weight:600;color:#e8eeff;margin-bottom:10px;}
+.ib-kw{display:inline-block;background:#ffd70020;border:1px solid #ffd700;color:#ffd700;font-weight:700;font-size:10px;padding:1px 7px;border-radius:4px;margin-right:3px;}
+.ans-block{background:#00281c;border:1px solid #00c8aa40;border-radius:8px;padding:14px;margin-bottom:10px;}
+.ans-label{font-size:9px;font-weight:700;letter-spacing:1px;color:#00c8aa;margin-bottom:7px;}
+.ans-pt{display:flex;gap:7px;margin-bottom:4px;font-size:12px;color:#4ad8a8;line-height:1.5;}
+.ans-tick{color:#00c8aa;flex-shrink:0;}
+.tip-block{background:#1a1200;border:1px solid #ffd70030;border-radius:8px;padding:12px;}
+.tip-label{font-size:9px;font-weight:700;letter-spacing:1px;color:#ffd700;margin-bottom:5px;}
+.tip-text{font-size:11.5px;color:#aa9040;line-height:1.55;}
+.kw-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.kw-tag{background:#001830;border:1px solid #00c8aa30;color:#00c8aa;font-size:10px;font-weight:600;padding:2px 9px;border-radius:100px;}
+
+/* ── VIDEOS PANEL ── */
+.yt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.yt-card{background:#0d1224;border:1px solid #1e2645;border-radius:12px;overflow:hidden;text-decoration:none;display:block;transition:border-color .15s;}
+.yt-card:hover{border-color:#00c8aa;}
+.yt-thumb{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;}
+.yt-play-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.yt-play-btn{width:48px;height:48px;background:rgba(255,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.yt-play-btn svg{width:18px;height:18px;fill:white;margin-left:3px;}
+.yt-dur{position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,.8);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;}
+.yt-info{padding:12px;}
+.yt-ch{font-size:10px;font-weight:700;color:#00c8aa;letter-spacing:.5px;margin-bottom:3px;}
+.yt-title{font-size:12.5px;font-weight:700;color:#e8eeff;line-height:1.35;margin-bottom:5px;}
+.yt-desc{font-size:11px;color:#4a5580;line-height:1.45;}
+.yt-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+.yt-tag{background:#07091a;color:#4a5580;font-size:10px;font-weight:600;padding:2px 7px;border-radius:100px;}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.sim-card{background:#0d1224;border:1px solid #1e2645;border-radius:10px;padding:14px;border-left:3px solid var(--c,#00c8aa);}
+.sim-title{font-size:12.5px;font-weight:700;color:#e8eeff;margin-bottom:4px;}
+.sim-desc{font-size:11px;color:#4a5580;margin-bottom:8px;line-height:1.45;}
+.sim-link{color:var(--c,#00c8aa);font-size:11px;font-weight:700;text-decoration:none;}
+
+/* ── NAME SCREEN ── */
+.name-screen{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;padding:40px;}
+.name-card{background:#0d1224;border:1px solid #1e2645;border-radius:16px;padding:36px;width:100%;max-width:440px;text-align:center;}
+.nc-icon{font-size:40px;margin-bottom:12px;}
+.nc-title{font-size:22px;font-weight:800;color:#e8eeff;margin-bottom:6px;}
+.nc-sub{font-size:13px;color:#4a5580;margin-bottom:24px;}
+.nc-input{width:100%;background:#07091a;border:2px solid #1e2645;border-radius:9px;padding:11px 16px;font-size:14px;font-family:'Space Grotesk',sans-serif;color:#e8eeff;outline:none;margin-bottom:10px;transition:border-color .2s;}
+.nc-input:focus{border-color:#00c8aa;}
+.nc-btn{width:100%;background:linear-gradient(135deg,#00c8aa,#0077b6);color:#000;border:none;padding:13px;border-radius:9px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .2s;margin-top:4px;}
+.nc-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px #00c8aa40;}
+
+/* ── QUIZ PANEL ── */
+.quiz-shell{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* quiz header strip */
+.quiz-hd{background:#0d1224;border-bottom:1px solid #1e2645;padding:10px 20px;display:flex;align-items:center;gap:16px;flex-shrink:0;}
+.quiz-progress{flex:1;height:5px;background:#1e2645;border-radius:99px;overflow:hidden;}
+.quiz-prog-fill{height:100%;background:linear-gradient(90deg,#00c8aa,#0099ff);border-radius:99px;transition:width .4s;}
+.quiz-qnum{font-size:12px;font-weight:700;color:#4a5580;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+.quiz-score-pill{background:#1a2040;border:1px solid #2a3560;border-radius:8px;padding:4px 12px;font-size:12px;color:#00c8aa;font-weight:700;white-space:nowrap;}
+
+/* question area */
+.quiz-body{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* timer + question */
+.quiz-top{background:#0a0d1e;border-bottom:1px solid #1e2645;padding:20px 28px;flex-shrink:0;}
+.quiz-meta{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.quiz-type-badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:100px;background:#001a30;color:#0099ff;border:1px solid #0099ff40;}
+.timer-ring{position:relative;width:52px;height:52px;flex-shrink:0;margin-left:auto;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#e8eeff;font-family:'JetBrains Mono',monospace;}
+.quiz-question{font-size:16px;font-weight:700;color:#e8eeff;line-height:1.4;}
+.quiz-section-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;color:#4a5580;margin-bottom:6px;}
+
+/* options grid */
+.quiz-opts{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 28px;overflow-y:auto;}
+.quiz-opt{background:#0d1224;border:2px solid #1e2645;border-radius:12px;padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;font-size:13.5px;font-weight:500;color:#8896cc;}
+.quiz-opt:hover:not(:disabled){border-color:#00c8aa;background:#0a1a28;color:#e8eeff;}
+.quiz-opt .opt-letter{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;background:#07091a;color:#4a5580;border:1px solid #1e2645;}
+.quiz-opt:hover:not(:disabled) .opt-letter{background:#00c8aa20;color:#00c8aa;border-color:#00c8aa;}
+.quiz-opt.selected{border-color:#00c8aa;background:#001e1a;color:#e8eeff;}
+.quiz-opt.selected .opt-letter{background:#00c8aa;color:#000;}
+.quiz-opt.correct{border-color:#06d6a0;background:#001a10;}
+.quiz-opt.correct .opt-letter{background:#06d6a0;color:#000;}
+.quiz-opt.wrong{border-color:#ef476f;background:#1a0010;}
+.quiz-opt.wrong .opt-letter{background:#ef476f;color:#fff;}
+.quiz-opt:disabled{cursor:default;}
+
+/* feedback bar */
+.feedback-bar{padding:12px 28px;border-top:1px solid #1e2645;flex-shrink:0;display:none;align-items:center;justify-content:space-between;gap:16px;}
+.feedback-bar.show{display:flex;}
+.feedback-bar.correct-bar{background:#001a10;border-top-color:#06d6a040;}
+.feedback-bar.wrong-bar{background:#1a0010;border-top-color:#ef476f40;}
+.fb-icon-text{display:flex;align-items:center;gap:10px;}
+.fb-icon{font-size:22px;}
+.fb-text{font-size:12.5px;color:#8896cc;line-height:1.5;flex:1;}
+.fb-text strong{color:#e8eeff;}
+.fb-points{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.next-btn{background:#00c8aa;color:#000;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Space Grotesk',sans-serif;flex-shrink:0;}
+/* fill-blank */
+.fill-input-wrap{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 0;}
+.fill-sentence{font-size:15px;color:#8896cc;text-align:center;line-height:2;}
+.fill-blank{display:inline-block;border-bottom:2px solid #00c8aa;min-width:140px;padding:2px 8px;font-size:15px;color:#00c8aa;text-align:center;font-family:'JetBrains Mono',monospace;}
+.fill-input{background:#0d1224;border:2px solid #1e2645;border-radius:9px;padding:11px 18px;font-size:15px;font-family:'Space Grotesk',sans-serif;color:#e8eeff;outline:none;width:280px;text-align:center;transition:border-color .2s;}
+.fill-input:focus{border-color:#00c8aa;}
+.fill-submit-btn{background:#00c8aa;color:#000;border:none;padding:10px 28px;border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
+/* match */
+.match-wrap{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;padding:4px 0;}
+.match-col-hd{font-size:10px;font-weight:700;letter-spacing:1px;color:#3a4570;margin-bottom:6px;}
+.match-item{background:#0d1224;border:2px solid #1e2645;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:12.5px;color:#6272a0;transition:all .15s;margin-bottom:6px;}
+.match-item:hover{border-color:#00c8aa;color:#e8eeff;}
+.match-item.sel{border-color:#00c8aa;background:#001e1a;color:#00c8aa;}
+.match-item.correct{border-color:#06d6a0;background:#001a10;color:#4ad8a8;}
+.match-item.wrong-m{border-color:#ef476f;background:#1a0010;color:#f87171;}
+/* short */
+.short-wrap{grid-column:1/-1;display:flex;flex-direction:column;gap:12px;width:100%;padding:4px 0;}
+.short-ta{width:100%;background:#0d1224;border:2px solid #1e2645;border-radius:9px;padding:12px 16px;font-size:13px;font-family:'Space Grotesk',sans-serif;color:#e8eeff;outline:none;resize:vertical;min-height:80px;transition:border-color .2s;}
+.short-ta:focus{border-color:#00c8aa;}
+.show-model-btn{background:#1a2040;border:1px solid #2a3560;color:#8896cc;padding:8px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;align-self:flex-start;}
+.model-ans{background:#001a10;border:1px solid #00c8aa30;border-radius:8px;padding:14px;display:none;}
+.ma-label{font-size:9px;font-weight:700;color:#00c8aa;letter-spacing:1px;margin-bottom:6px;}
+.ma-text{font-size:12px;color:#4ad8a8;line-height:1.65;}
+
+/* ── RESULTS PANEL ── */
+.results-shell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:20px;overflow-y:auto;}
+.results-card{background:#0d1224;border:1px solid #1e2645;border-radius:16px;width:100%;max-width:540px;overflow:hidden;}
+.results-top{background:linear-gradient(135deg,#001a30,#0a1a3a);padding:28px;text-align:center;}
+.res-icon{font-size:48px;margin-bottom:10px;}
+.res-score{font-size:56px;font-weight:800;font-family:'JetBrains Mono',monospace;color:#00c8aa;margin-bottom:4px;}
+.res-grade{font-size:14px;color:#4a5580;margin-bottom:16px;}
+.res-bar-wrap{height:8px;background:#07091a;border-radius:99px;overflow:hidden;width:80%;margin:0 auto;}
+.res-bar{height:100%;background:linear-gradient(90deg,#00c8aa,#0099ff);border-radius:99px;}
+.results-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1e2645;}
+.rb-item{background:#0d1224;padding:16px;text-align:center;}
+.rb-num{font-size:22px;font-weight:800;color:#00c8aa;font-family:'JetBrains Mono',monospace;}
+.rb-lbl{font-size:11px;color:#4a5580;margin-top:2px;}
+.results-actions{display:flex;gap:10px;padding:16px;border-top:1px solid #1e2645;}
+.ra-btn{flex:1;padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;border:none;transition:all .15s;}
+.ra-primary{background:#00c8aa;color:#000;}
+.ra-secondary{background:#1a2040;color:#8896cc;border:1px solid #2a3560;}
+.saved-pill{background:#001a10;border:1px solid #00c8aa40;border-radius:8px;padding:10px 16px;text-align:center;font-size:12px;color:#4ad8a8;width:100%;max-width:540px;}
+
+/* ── MISC SHARED ── */
+.section-divider{font-size:10px;font-weight:700;letter-spacing:2px;color:#2a3560;text-transform:uppercase;margin:18px 0 10px;display:flex;align-items:center;gap:8px;}
+.section-divider::after{content:'';flex:1;height:1px;background:#1a2240;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <div class="tb-badge">IBDP CS 2027</div>
+      <span class="tb-title">A1.1 Computer Hardware &amp; Operation</span>
+      <span class="tb-sub">CPU Components · A1.1.1 &amp; A1.1.2</span>
+    </div>
+    <div class="tb-right">
+      <div class="student-badge" id="studentBadge">👤 <span id="badgeName">—</span></div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sb-label">Navigation</div>
+    </div>
+    <div class="nav-items">
+      <div class="nav-item active" onclick="goPanel('notes',this)">
+        <span class="nav-icon">📖</span>Topic Notes<span class="nav-badge">A1.1.1</span>
+      </div>
+      <div class="nav-item" onclick="goPanel('specimen',this)">
+        <span class="nav-icon">🧪</span>Specimen Paper<span class="nav-badge">3 Qs</span>
+      </div>
+      <div class="nav-item" onclick="goPanel('videos',this)">
+        <span class="nav-icon">▶️</span>Videos &amp; Sims<span class="nav-badge">8</span>
+      </div>
+      <div class="nav-item" onclick="goPanel('quiz',this)">
+        <span class="nav-icon">🎯</span>Kahoot Quiz<span class="nav-badge">20 Qs</span>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      SL: 11 hours · HL: 18 hours<br>First Assessment 2027
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANEL: TOPIC NOTES                    -->
+  <!-- ══════════════════════════════════════ -->
+  <main class="main">
+
+  <div class="panel active" id="panel-notes">
+    <div class="panel-hd">
+      <div class="panel-title">Topic Notes — A1.1.1 CPU Components</div>
+      <div class="panel-sub">ALU · Control Unit · Registers · Buses · Processors · FDE Cycle</div>
+    </div>
+    <div class="panel-body">
+
+      <!-- CPU DIAGRAM -->
+      <div class="diagram-box">
+        <div class="section-divider">CPU Architecture Diagram</div>
+        <svg width="100%" viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#00c8aa"/></marker>
+            <marker id="ap" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#c084fc"/></marker>
+            <marker id="ag" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#06d6a0"/></marker>
+          </defs>
+          <!-- CPU boundary -->
+          <rect x="100" y="14" width="420" height="228" rx="14" fill="rgba(13,26,58,0.7)" stroke="#1e2645" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="310" y="32" text-anchor="middle" fill="#2a3560" font-family="Space Grotesk" font-size="9" font-weight="700" letter-spacing="3">C P U</text>
+          <!-- ALU -->
+          <rect x="122" y="44" width="160" height="86" rx="9" fill="rgba(0,180,216,0.1)" stroke="#00c8aa" stroke-width="2"/>
+          <text x="202" y="70" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="15" font-weight="800">ALU</text>
+          <text x="202" y="86" text-anchor="middle" fill="#4a5580" font-family="Space Grotesk" font-size="9">Arithmetic Logic Unit</text>
+          <text x="202" y="101" text-anchor="middle" fill="#3a4568" font-family="Space Grotesk" font-size="8.5">+ − × ÷ · AND · OR · NOT</text>
+          <text x="202" y="118" text-anchor="middle" fill="#3a4568" font-family="Space Grotesk" font-size="8.5">Result → Accumulator</text>
+          <!-- CU -->
+          <rect x="338" y="44" width="160" height="86" rx="9" fill="rgba(192,132,252,0.1)" stroke="#c084fc" stroke-width="2"/>
+          <text x="418" y="70" text-anchor="middle" fill="#c084fc" font-family="Space Grotesk" font-size="15" font-weight="800">CU</text>
+          <text x="418" y="86" text-anchor="middle" fill="#4a5580" font-family="Space Grotesk" font-size="9">Control Unit</text>
+          <text x="418" y="101" text-anchor="middle" fill="#4a3568" font-family="Space Grotesk" font-size="8.5">Fetch → Decode → Execute</text>
+          <text x="418" y="118" text-anchor="middle" fill="#4a3568" font-family="Space Grotesk" font-size="8.5">Sends all control signals</text>
+          <!-- CU→ALU -->
+          <line x1="338" y1="87" x2="284" y2="87" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ap)"/>
+          <text x="311" y="80" text-anchor="middle" fill="#6a4580" font-family="Space Grotesk" font-size="7">control</text>
+          <!-- REGISTERS label -->
+          <text x="310" y="160" text-anchor="middle" fill="#2a3560" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="2">R E G I S T E R S</text>
+          <!-- PC -->
+          <rect x="110" y="168" width="66" height="56" rx="6" fill="rgba(6,214,160,0.08)" stroke="#06d6a0" stroke-width="1.5"/>
+          <text x="143" y="188" text-anchor="middle" fill="#06d6a0" font-family="Space Grotesk" font-size="11" font-weight="800">PC</text>
+          <text x="143" y="202" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Program</text>
+          <text x="143" y="213" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Counter</text>
+          <!-- IR -->
+          <rect x="182" y="168" width="66" height="56" rx="6" fill="rgba(0,180,216,0.08)" stroke="#00c8aa" stroke-width="1.5"/>
+          <text x="215" y="188" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="11" font-weight="800">IR</text>
+          <text x="215" y="202" text-anchor="middle" fill="#1a4050" font-family="JetBrains Mono" font-size="7.5">Instruction</text>
+          <text x="215" y="213" text-anchor="middle" fill="#1a4050" font-family="JetBrains Mono" font-size="7.5">Register</text>
+          <!-- MAR -->
+          <rect x="254" y="168" width="66" height="56" rx="6" fill="rgba(244,162,97,0.08)" stroke="#f4a261" stroke-width="1.5"/>
+          <text x="287" y="188" text-anchor="middle" fill="#f4a261" font-family="Space Grotesk" font-size="11" font-weight="800">MAR</text>
+          <text x="287" y="202" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7.5">Memory</text>
+          <text x="287" y="213" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7.5">Addr Reg</text>
+          <!-- MDR -->
+          <rect x="326" y="168" width="66" height="56" rx="6" fill="rgba(239,71,111,0.08)" stroke="#ef476f" stroke-width="1.5"/>
+          <text x="359" y="188" text-anchor="middle" fill="#ef476f" font-family="Space Grotesk" font-size="11" font-weight="800">MDR</text>
+          <text x="359" y="202" text-anchor="middle" fill="#502030" font-family="JetBrains Mono" font-size="7.5">Memory</text>
+          <text x="359" y="213" text-anchor="middle" fill="#502030" font-family="JetBrains Mono" font-size="7.5">Data Reg</text>
+          <!-- AC -->
+          <rect x="398" y="168" width="66" height="56" rx="6" fill="rgba(6,214,160,0.08)" stroke="#06d6a0" stroke-width="1.5"/>
+          <text x="431" y="188" text-anchor="middle" fill="#06d6a0" font-family="Space Grotesk" font-size="11" font-weight="800">AC</text>
+          <text x="431" y="202" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Accumu-</text>
+          <text x="431" y="213" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">lator</text>
+          <!-- ALU→AC -->
+          <path d="M 282 130 Q 431 148 431 166" fill="none" stroke="#06d6a0" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#ag)"/>
+          <!-- PC→MAR dotted -->
+          <path d="M 143 224 Q 143 238 287 238 Q 287 226 287 224" fill="none" stroke="#06d6a0" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#ag)"/>
+          <text x="215" y="236" text-anchor="middle" fill="#1a4030" font-family="Space Grotesk" font-size="7">PC → MAR</text>
+          <!-- THREE BUSES -->
+          <rect x="105" y="244" width="410" height="11" rx="3" fill="rgba(0,180,216,0.1)" stroke="#00c8aa50" stroke-width="1"/>
+          <text x="310" y="253" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="7.5" font-weight="700">ADDRESS BUS — unidirectional → (CPU to Memory)</text>
+          <!-- RAM -->
+          <rect x="560" y="44" width="110" height="152" rx="9" fill="rgba(244,162,97,0.07)" stroke="#f4a26180" stroke-width="1.5"/>
+          <text x="615" y="66" text-anchor="middle" fill="#f4a261" font-family="Space Grotesk" font-size="12" font-weight="700">RAM</text>
+          <rect x="572" y="74" width="86" height="11" rx="2" fill="rgba(244,162,97,0.15)"/>
+          <text x="615" y="83" text-anchor="middle" fill="#605030" font-family="JetBrains Mono" font-size="7">addr → data</text>
+          <rect x="572" y="90" width="86" height="11" rx="2" fill="rgba(244,162,97,0.1)"/>
+          <text x="615" y="99" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7">addr → data</text>
+          <rect x="572" y="106" width="86" height="11" rx="2" fill="rgba(244,162,97,0.07)"/>
+          <!-- bus lines to RAM -->
+          <line x1="515" y1="249" x2="560" y2="100" stroke="#00c8aa60" stroke-width="1.5" marker-end="url(#ah)"/>
+          <line x1="515" y1="254" x2="560" y2="120" stroke="#06d6a060" stroke-width="1" stroke-dasharray="3,3"/>
+        </svg>
+      </div>
+
+      <!-- COMPONENT CARDS -->
+      <div class="topic-grid">
+        <div class="topic-card" style="--c:#00c8aa">
+          <div class="tc-label">ALU</div>
+          <div class="tc-title">Arithmetic Logic Unit</div>
+          <div class="tc-body">Performs ALL calculations and logical decisions inside the CPU.</div>
+          <div class="tc-items">
+            <div class="tc-item"><div class="tc-dot"></div>Arithmetic: + − × ÷ on binary numbers</div>
+            <div class="tc-item"><div class="tc-dot"></div>Logical: AND, OR, NOT, XOR, comparisons</div>
+            <div class="tc-item"><div class="tc-dot"></div>All results go to the Accumulator (AC)</div>
+          </div>
+        </div>
+        <div class="topic-card" style="--c:#c084fc">
+          <div class="tc-label">CU</div>
+          <div class="tc-title">Control Unit</div>
+          <div class="tc-body">The manager of the CPU — coordinates all activity.</div>
+          <div class="tc-items">
+            <div class="tc-item"><div class="tc-dot"></div>Fetches instructions from memory</div>
+            <div class="tc-item"><div class="tc-dot"></div>Decodes instructions held in IR</div>
+            <div class="tc-item"><div class="tc-dot"></div>Sends control signals to all components</div>
+          </div>
+        </div>
+        <div class="topic-card" style="--c:#06d6a0">
+          <div class="tc-label">Registers — 5 types</div>
+          <div class="tc-title">Ultra-Fast CPU Storage</div>
+          <div class="tc-items">
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">PC</strong> — address of NEXT instruction</div>
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">IR</strong> — CURRENT instruction being decoded</div>
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">MAR</strong> — memory ADDRESS to access</div>
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">MDR</strong> — DATA read from / written to RAM</div>
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">AC</strong> — result of last ALU operation</div>
+          </div>
+        </div>
+        <div class="topic-card" style="--c:#f4a261">
+          <div class="tc-label">Buses — 3 types</div>
+          <div class="tc-title">Electrical Pathways</div>
+          <div class="tc-items">
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#00c8aa">Address Bus</strong> — addresses MAR→RAM · UNIDIRECTIONAL</div>
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#06d6a0">Data Bus</strong> — actual data MDR↔RAM · BIDIRECTIONAL</div>
+            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#f4a261">Control Bus</strong> — read/write signals CU→all · BIDIRECTIONAL</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FDE CYCLE -->
+      <div class="section-divider" style="margin-top:16px;">Fetch–Decode–Execute Cycle</div>
+      <div class="fde-grid">
+        <div class="fde-step" style="border-top:3px solid #00c8aa">
+          <div class="fde-num" style="color:#00c8aa">STEP 1 · FETCH</div>
+          <div class="fde-title" style="color:#00c8aa">Fetch</div>
+          <div class="fde-pts">1. PC → MAR (address)<br>2. MAR → RAM via address bus<br>3. RAM → MDR via data bus<br>4. MDR → IR (instruction)<br>5. PC incremented (+1)</div>
+        </div>
+        <div class="fde-step" style="border-top:3px solid #c084fc">
+          <div class="fde-num" style="color:#c084fc">STEP 2 · DECODE</div>
+          <div class="fde-title" style="color:#c084fc">Decode</div>
+          <div class="fde-pts">CU reads IR<br>Identifies the operation<br>Identifies operands<br>Sends control signals<br>Prepares components</div>
+        </div>
+        <div class="fde-step" style="border-top:3px solid #06d6a0">
+          <div class="fde-num" style="color:#06d6a0">STEP 3 · EXECUTE</div>
+          <div class="fde-title" style="color:#06d6a0">Execute</div>
+          <div class="fde-pts">ALU performs operation<br>Result stored in AC<br>May write result to RAM<br>Cycle repeats<br>Billions of times / second</div>
+        </div>
+      </div>
+
+      <!-- PROCESSORS -->
+      <div class="section-divider" style="margin-top:16px;">Processor Types &amp; GPU</div>
+      <div class="topic-grid">
+        <div class="topic-card" style="--c:#0099ff">
+          <div class="tc-label">Single-Core</div>
+          <div class="tc-title">Single-Core Processor</div>
+          <div class="tc-body">One processing unit — executes one instruction stream sequentially. Older computers. Cannot multitask genuinely.</div>
+        </div>
+        <div class="topic-card" style="--c:#06d6a0">
+          <div class="tc-label">Multi-Core</div>
+          <div class="tc-title">Multi-Core Processor</div>
+          <div class="tc-body">Multiple independent cores on one chip (dual/quad/octa-core). Each core runs its own thread — true parallelism for multiple applications simultaneously.</div>
+        </div>
+        <div class="topic-card" style="--c:#f4a261">
+          <div class="tc-label">Co-Processors</div>
+          <div class="tc-title">Co-Processors</div>
+          <div class="tc-body">Specialist chips that offload specific tasks from the CPU. Examples: GPU (graphics/AI), FPU (floating-point), NPU (neural networks), DSP (audio/video).</div>
+        </div>
+        <div class="topic-card" style="--c:#ef476f">
+          <div class="tc-label">GPU — A1.1.2</div>
+          <div class="tc-title">Graphics Processing Unit</div>
+          <div class="tc-body">Thousands of smaller cores for parallel computation. Used for: 3D gaming, AI/ML training (matrix ops), scientific simulation, video encoding. Key: SIMD parallel architecture.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANEL: SPECIMEN PAPER                 -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel" id="panel-specimen">
+    <div class="panel-hd">
+      <div class="panel-title">Specimen Paper Analysis</div>
+      <div class="panel-sub">Official IB questions · Mark-scheme answers · Examiner tips</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="spec-q">
+        <div class="spec-hd"><div class="spec-hd-title">Q1(a) — HL Paper 1 Specimen · A1.1.1</div><div class="spec-marks">[2 marks]</div></div>
+        <div class="spec-body">
+          <div class="spec-ctx">Context: A team of programmers use PaaS via their laptops to develop a software application.</div>
+          <div class="spec-q-text"><span class="ib-kw">Outline</span> the function of an accumulator.</div>
+          <div class="kw-row"><span class="kw-tag">Outline = brief account</span><span class="kw-tag">2 marks = 2 separate points</span><span class="kw-tag">Points separated by semicolons</span></div>
+          <div class="ans-block" style="margin-top:12px;">
+            <div class="ans-label">✅ MARK SCHEME ANSWER</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>To <strong>store intermediate arithmetic and logic results</strong> / hold operand data; [1]</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>…to <strong>reduce the number of memory accesses</strong> by holding intermediate results; [1]</div>
+            <div class="ans-pt" style="margin-top:6px;padding-top:6px;border-top:1px solid #00c8aa20;"><span class="ans-tick" style="color:#4a5580">Alt:</span>Acts as a <em>temporary storage location</em>; which stores values and results from arithmetic and logical operations;</div>
+          </div>
+          <div class="tip-block">
+            <div class="tip-label">💡 Examiner Tip</div>
+            <div class="tip-text">Saying "the accumulator stores data" earns zero — too vague. You must specify it stores <strong>results of arithmetic/logic operations</strong>. Second mark: explain WHY — reduces memory accesses, speeding up processing. Always look for two linked ideas for [2] questions.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-q">
+        <div class="spec-hd"><div class="spec-hd-title">Practice Q — Registers &amp; FDE Cycle · A1.1.1</div><div class="spec-marks">[4 marks]</div></div>
+        <div class="spec-body">
+          <div class="spec-q-text"><span class="ib-kw">Explain</span> how the Program Counter (PC) and Memory Address Register (MAR) interact during the fetch phase of the FDE cycle.</div>
+          <div class="kw-row"><span class="kw-tag">Explain = detailed account with reasons</span><span class="kw-tag">Link cause and effect</span><span class="kw-tag">4 points needed</span></div>
+          <div class="ans-block" style="margin-top:12px;">
+            <div class="ans-label">✅ MARK SCHEME ANSWER</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>The <strong>PC holds the address</strong> of the next instruction to be fetched from memory; [1]</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>This address is <strong>copied from PC to MAR</strong>; [1]</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>MAR sends address along the <strong>address bus to RAM</strong> to request the instruction; [1]</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>The <strong>PC is incremented (+1)</strong> so it points to the next instruction for the following cycle; [1]</div>
+          </div>
+          <div class="tip-block">
+            <div class="tip-label">💡 Examiner Tip</div>
+            <div class="tip-text">For "explain" questions always connect WHAT to WHY. Don't just say "PC goes to MAR" — explain this is so the CPU knows which memory address to access. Use "address bus" specifically. The PC increment is the most commonly missed mark point in FDE questions.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-q">
+        <div class="spec-hd"><div class="spec-hd-title">Q4(c) — HL Paper 1 Specimen · A1.1.2 GPU</div><div class="spec-marks">[2 marks]</div></div>
+        <div class="spec-body">
+          <div class="spec-ctx">A hospital uses a deep learning CNN to analyse chest X-rays and predict likelihood of pneumonia.</div>
+          <div class="spec-q-text"><span class="ib-kw">Outline</span> one reason a GPU is recommended when training a deep learning CNN model using a large dataset.</div>
+          <div class="kw-row"><span class="kw-tag">Parallel processing</span><span class="kw-tag">Matrix operations</span><span class="kw-tag">Many smaller cores</span><span class="kw-tag">Training speed</span></div>
+          <div class="ans-block" style="margin-top:12px;">
+            <div class="ans-label">✅ MARK SCHEME ANSWER</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>Deep learning involves many <strong>matrix operations</strong> (multiplications and convolutions); [1]</div>
+            <div class="ans-pt"><span class="ans-tick">✓</span>GPUs have many smaller cores designed for <strong>parallel operations</strong>, significantly speeding up training; [1]</div>
+            <div class="ans-pt" style="margin-top:6px;padding-top:6px;border-top:1px solid #00c8aa20;"><span class="ans-tick" style="color:#4a5580">Alt:</span>Large datasets increase computational demand; training on CPU alone would be too time-consuming;</div>
+          </div>
+          <div class="tip-block">
+            <div class="tip-label">💡 The GPU Answer Formula</div>
+            <div class="tip-text">Always link TWO things: (1) what AI/ML needs — parallel matrix operations on large data, and (2) what GPU provides — thousands of smaller cores for parallel processing. Without the link you get only 1/2. The magic word is always <strong>"parallel"</strong>.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANEL: VIDEOS                         -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel" id="panel-videos">
+    <div class="panel-hd">
+      <div class="panel-title">Video Resources &amp; Simulations</div>
+      <div class="panel-sub">Curated YouTube videos and free online tools for every sub-topic</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="section-divider">CPU Components &amp; FDE Cycle</div>
+      <div class="yt-grid">
+        <a class="yt-card" href="https://www.youtube.com/watch?v=FZGugFqdr60" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#001830,#003060);">
+            <div style="font-size:32px;">🖥️</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">9 min</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">Craig &amp; Dave</div>
+            <div class="yt-title">CPU Components — ALU, CU, Registers &amp; Buses Explained</div>
+            <div class="yt-desc">Directly covers A1.1.1. Clear diagrams of every component and how they interact. Best starting video.</div>
+            <div class="yt-tags"><span class="yt-tag">ALU</span><span class="yt-tag">CU</span><span class="yt-tag">Registers</span><span class="yt-tag">Buses</span></div>
+          </div>
+        </a>
+        <a class="yt-card" href="https://www.youtube.com/watch?v=Z5JC9Ve1sfI" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#1a0030,#3b0070);">
+            <div style="font-size:32px;">⚙️</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">7 min</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">Computerphile</div>
+            <div class="yt-title">How Does a CPU Work? — Architecture Visualised</div>
+            <div class="yt-desc">University-level depth with clear visuals. Great for HL students wanting deeper understanding.</div>
+            <div class="yt-tags"><span class="yt-tag">Architecture</span><span class="yt-tag">HL depth</span></div>
+          </div>
+        </a>
+        <a class="yt-card" href="https://www.youtube.com/watch?v=yyHFI5juppA" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#001020,#003050);">
+            <div style="font-size:32px;">🔄</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">8 min</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">Craig &amp; Dave</div>
+            <div class="yt-title">Fetch Decode Execute Cycle — Registers Animated in Detail</div>
+            <div class="yt-desc">Shows exactly what changes in PC, MAR, MDR, IR at each step. Best for FDE understanding.</div>
+            <div class="yt-tags"><span class="yt-tag">PC</span><span class="yt-tag">MAR</span><span class="yt-tag">MDR</span><span class="yt-tag">IR</span></div>
+          </div>
+        </a>
+        <a class="yt-card" href="https://www.youtube.com/watch?v=2BFGFVE4JRo" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#001a10,#003a20);">
+            <div style="font-size:32px;">⚡</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">84 sec</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">CS Simplified</div>
+            <div class="yt-title">The Fetch–Decode–Execute Cycle in 84 Seconds</div>
+            <div class="yt-desc">Quick animated revision of all three stages. Perfect for last-minute review before a test.</div>
+            <div class="yt-tags"><span class="yt-tag">Quick revision</span><span class="yt-tag">Animation</span></div>
+          </div>
+        </a>
+        <a class="yt-card" href="https://www.youtube.com/watch?v=IAkj32VPcUE" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#200010,#500030);">
+            <div style="font-size:32px;">📺</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">5 min</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">BBC Bitesize · Too Tall Productions</div>
+            <div class="yt-title">The Fetch Decode Execute Cycle — Animated</div>
+            <div class="yt-desc">High-quality BBC animation showing RAM, CPU and all registers clearly. Great for visual learners.</div>
+            <div class="yt-tags"><span class="yt-tag">Animation</span><span class="yt-tag">Visual</span></div>
+          </div>
+        </a>
+        <a class="yt-card" href="https://www.youtube.com/watch?v=O5nskjZ_GoI" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#100030,#300070);">
+            <div style="font-size:32px;">🎓</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">6 min</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">Cambridge IGCSE CS</div>
+            <div class="yt-title">Fetch–Decode–Execute Cycle — Cambridge / IBDP Aligned</div>
+            <div class="yt-desc">Structured for international syllabuses. Covers timing diagrams and register state changes.</div>
+            <div class="yt-tags"><span class="yt-tag">IBDP aligned</span><span class="yt-tag">Structured</span></div>
+          </div>
+        </a>
+      </div>
+
+      <div class="section-divider">GPU &amp; Multi-Core (A1.1.2)</div>
+      <div class="yt-grid">
+        <a class="yt-card" href="https://www.youtube.com/watch?v=LfdK-v0SbGI" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#001a00,#003a00);">
+            <div style="font-size:32px;">🎮</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">8 min</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">Branch Education</div>
+            <div class="yt-title">How do Graphics Cards Work? CPU vs GPU Explained</div>
+            <div class="yt-desc">Beautifully animated. Shows GPU architecture — thousands of cores, parallel processing. Highly recommended.</div>
+            <div class="yt-tags"><span class="yt-tag">GPU architecture</span><span class="yt-tag">Parallel</span></div>
+          </div>
+        </a>
+        <a class="yt-card" href="https://www.youtube.com/watch?v=aUSkC3H7uI0" target="_blank">
+          <div class="yt-thumb" style="background:linear-gradient(135deg,#0a0a00,#2a2a00);">
+            <div style="font-size:32px;">🤖</div>
+            <div class="yt-play-wrap"><div class="yt-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+            <div class="yt-dur">10 min</div>
+          </div>
+          <div class="yt-info">
+            <div class="yt-ch">AI Explainers</div>
+            <div class="yt-title">Why GPUs Are Perfect for Deep Learning &amp; AI Training</div>
+            <div class="yt-desc">Explains matrix multiplication and parallel cores — directly links to A1.1.2 and A4 Machine Learning.</div>
+            <div class="yt-tags"><span class="yt-tag">Deep learning</span><span class="yt-tag">Matrix ops</span><span class="yt-tag">A4 link</span></div>
+          </div>
+        </a>
+      </div>
+
+      <div class="section-divider">Free Online Simulations</div>
+      <div class="sim-grid">
+        <div class="sim-card" style="--c:#00c8aa"><div class="sim-title">🔗 CPUlator</div><div class="sim-desc">Run assembly instructions and watch all registers (PC, MAR, MDR, IR, AC) change in real time.</div><a class="sim-link" href="https://cpulator.01xz.net" target="_blank">cpulator.01xz.net →</a></div>
+        <div class="sim-card" style="--c:#06d6a0"><div class="sim-title">🔗 Little Man Computer (LMC)</div><div class="sim-desc">Visual FDE simulation — type instructions and watch the CPU execute step-by-step with animated registers.</div><a class="sim-link" href="https://peterhigginson.co.uk/LMC/" target="_blank">peterhigginson.co.uk/LMC →</a></div>
+        <div class="sim-card" style="--c:#c084fc"><div class="sim-title">🔗 WithCode CPU Simulator</div><div class="sim-desc">FDE cycle simulator showing PC, MAR, MDR, IR and AC updating with each clock cycle.</div><a class="sim-link" href="https://withcode.uk/cpu/" target="_blank">withcode.uk/cpu →</a></div>
+        <div class="sim-card" style="--c:#f4a261"><div class="sim-title">🔗 RevisionDojo IBDP CS</div><div class="sim-desc">IB-specific notes written with IB command terms and mark-scheme language for A1.1.1.</div><a class="sim-link" href="https://www.revisiondojo.com/ib/ib-computer-science" target="_blank">revisiondojo.com →</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANEL: QUIZ                           -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel" id="panel-quiz">
+
+    <!-- NAME SCREEN -->
+    <div class="name-screen" id="nameScreen">
+      <div class="name-card">
+        <div class="nc-icon">🎯</div>
+        <div class="nc-title">A1.1 CPU Fundamentals Quiz</div>
+        <div class="nc-sub">20 questions · Timed · Kahoot-style · Scores saved to Google Sheets</div>
+        <input class="nc-input" id="qName" type="text" placeholder="Enter your full name" />
+        <input class="nc-input" id="qClass" type="text" placeholder="Class / Grade" />
+        <button class="nc-btn" onclick="startQuiz()">Start Quiz →</button>
+      </div>
+    </div>
+
+    <!-- QUIZ SHELL -->
+    <div class="quiz-shell" id="quizShell" style="display:none;">
+      <div class="quiz-hd">
+        <div class="quiz-qnum" id="qNum">Q1/20</div>
+        <div class="quiz-progress"><div class="quiz-prog-fill" id="qProgFill" style="width:5%"></div></div>
+        <div class="quiz-score-pill" id="qScorePill">0 pts</div>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-top">
+          <div class="quiz-meta">
+            <div class="quiz-type-badge" id="qTypeBadge">MCQ</div>
+            <div class="timer-ring" id="timerRing">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="22" fill="none" stroke="#1e2645" stroke-width="4"/>
+                <circle cx="26" cy="26" r="22" fill="none" stroke="#00c8aa" stroke-width="4"
+                  stroke-dasharray="138.23" stroke-dashcap="round"
+                  id="timerCircle" style="transition:stroke-dashoffset .9s linear,stroke .3s;"/>
+              </svg>
+              <div class="timer-ring-num" id="timerNum">20</div>
+            </div>
+          </div>
+          <div class="quiz-section-lbl" id="qSectionLbl">SECTION A · MULTIPLE CHOICE</div>
+          <div class="quiz-question" id="qText">Loading...</div>
+        </div>
+        <div class="quiz-opts" id="qOpts"></div>
+        <div class="feedback-bar" id="fbBar">
+          <div class="fb-icon-text">
+            <div class="fb-icon" id="fbIcon">✅</div>
+            <div class="fb-text" id="fbText"></div>
+          </div>
+          <div class="fb-points" id="fbPoints"></div>
+          <button class="next-btn" onclick="nextQ()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div class="results-shell" id="resultsScreen" style="display:none;">
+      <div class="results-card">
+        <div class="results-top">
+          <div class="res-icon" id="resIcon">🎉</div>
+          <div class="res-score" id="resScore">—</div>
+          <div class="res-grade" id="resGrade">—</div>
+          <div class="res-bar-wrap"><div class="res-bar" id="resBar" style="width:0%"></div></div>
+        </div>
+        <div class="results-breakdown">
+          <div class="rb-item"><div class="rb-num" id="rbMCQ">—</div><div class="rb-lbl">MCQ</div></div>
+          <div class="rb-item"><div class="rb-num" id="rbFill">—</div><div class="rb-lbl">Fill Blanks</div></div>
+          <div class="rb-item"><div class="rb-num" id="rbMatch">—</div><div class="rb-lbl">Match</div></div>
+        </div>
+        <div class="results-actions">
+          <button class="ra-btn ra-secondary" onclick="retryQuiz()">↺ Try Again</button>
+          <button class="ra-btn ra-primary" onclick="goPanel('notes',null)">📖 Review Notes</button>
+        </div>
+      </div>
+      <div class="saved-pill" id="savedPill">✅ Results saved to Google Sheets</div>
+    </div>
+
+  </div>
+
+  </main>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+// ── PANEL NAVIGATION ───────────────────────────────────────────────────────
+function goPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ── QUIZ DATA (20 questions across 4 types) ───────────────────────────────
+const QUESTIONS = [
+  // ── SECTION A: MCQ (10 questions) ────────────────────────────────────────
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'What is the primary function of the Arithmetic Logic Unit (ALU)?',
+    opts:['Stores the address of the next instruction','Performs arithmetic and logical operations','Coordinates all CPU activity','Holds data recently read from memory'],
+    ans:1, fb:'The ALU performs ALL arithmetic (+ − × ÷) and logical (AND, OR, NOT) operations. Results are stored in the Accumulator.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'Which register holds the address of the NEXT instruction to be fetched?',
+    opts:['Instruction Register (IR)','Accumulator (AC)','Program Counter (PC)','Memory Data Register (MDR)'],
+    ans:2, fb:'The Program Counter (PC) always holds the address of the NEXT instruction. After fetching, PC is incremented (+1) automatically.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'The address bus is UNIDIRECTIONAL. What does this mean?',
+    opts:['It carries data in both directions','It carries addresses only from CPU to memory — one way','It is controlled by the MDR','It carries both addresses and data together'],
+    ans:1, fb:'Address bus = UNIDIRECTIONAL (one-way: CPU→Memory). Data bus = BIDIRECTIONAL (two-way). This distinction is very commonly tested in IB exams.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'What does the Accumulator (AC) store?',
+    opts:['The address of the next instruction','The current instruction being decoded','The result of the most recent ALU operation','The memory address being accessed'],
+    ans:2, fb:'AC stores the RESULT of the most recent ALU operation. PC=next address, IR=current instruction, MAR=memory address. AC is the ALU\'s scratchpad.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'During the FETCH phase, which is the correct sequence?',
+    opts:['CU → ALU → AC → MDR','IR → MAR → MDR → PC','MDR → PC → MAR → IR','PC → MAR → MDR → IR (then PC++)'],
+    ans:3, fb:'Correct: PC sends address to MAR → MAR requests from RAM → RAM returns data to MDR → MDR loads into IR → PC increments. This is the exact IB sequence.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'What is the key advantage of a multi-core processor over a single-core?',
+    opts:['Higher clock speed per core','Less power consumption','Multiple cores enable true simultaneous parallel execution','Larger cache memory per core'],
+    ans:2, fb:'Multi-core = multiple independent cores that genuinely execute different threads simultaneously (true parallelism). Single-core is sequential — one task at a time.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'The Memory Address Register (MAR) holds:',
+    opts:['The result of the last ALU calculation','The current instruction being decoded','The memory ADDRESS to read from or write to','The actual DATA recently read from RAM'],
+    ans:2, fb:'MAR = memory ADDRESS. MDR = actual DATA. This MAR vs MDR distinction is critical and frequently tested. MAR sends the address; MDR holds the data.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'Which bus carries read, write and clock signals from the Control Unit?',
+    opts:['Address Bus','Data Bus','Control Bus','Register Bus'],
+    ans:2, fb:'Control Bus carries control signals (read, write, clock, interrupt) from CU to all components. It is bidirectional. Address=addresses, Data=actual data.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'A GPU is preferred over a CPU for training a neural network because:',
+    opts:['GPUs have fewer but more powerful cores','GPUs have thousands of smaller cores enabling parallel matrix operations','GPUs have larger cache memory','GPUs run at higher clock speeds'],
+    ans:1, fb:'GPUs have THOUSANDS of smaller, simpler cores for parallel operations. Deep learning uses massive matrix multiplications — perfect for GPU parallel architecture.' },
+  { type:'mcq', section:'SECTION A · MULTIPLE CHOICE', time:20,
+    q:'During the DECODE phase, which component decodes the instruction?',
+    opts:['ALU','Accumulator','Program Counter','Control Unit (CU)'],
+    ans:3, fb:'The Control Unit (CU) decodes the instruction stored in the IR. It determines what operation is needed, what data is required, and sends the appropriate control signals.' },
+
+  // ── SECTION B: FILL IN THE BLANK (5 questions) ───────────────────────────
+  { type:'fill', section:'SECTION B · FILL IN THE BLANK', time:25,
+    q:'The ___ performs all arithmetic and logical operations in the CPU.',
+    blank:'ALU', answers:['alu','arithmetic logic unit'],
+    fb:'ALU (Arithmetic Logic Unit) — performs + − × ÷ AND OR NOT. Results go to the Accumulator.' },
+  { type:'fill', section:'SECTION B · FILL IN THE BLANK', time:25,
+    q:'The address bus is ___ — it carries addresses from CPU to memory only.',
+    blank:'unidirectional', answers:['unidirectional','one-way','one directional'],
+    fb:'Unidirectional = one direction only (CPU → Memory). The data bus is bidirectional (two-way).' },
+  { type:'fill', section:'SECTION B · FILL IN THE BLANK', time:25,
+    q:'During fetch, the Program Counter sends the instruction address to the ___.',
+    blank:'MAR', answers:['mar','memory address register'],
+    fb:'PC → MAR is the first action in the fetch phase. MAR then sends this address to RAM via the address bus.' },
+  { type:'fill', section:'SECTION B · FILL IN THE BLANK', time:25,
+    q:'The accumulator stores the ___ of the most recent ALU operation.',
+    blank:'result', answers:['result','results','output'],
+    fb:'Result — the AC holds the output of whatever arithmetic or logical operation the ALU just completed.' },
+  { type:'fill', section:'SECTION B · FILL IN THE BLANK', time:25,
+    q:'A ___ processor has multiple independent processing units on one chip.',
+    blank:'multi-core', answers:['multi-core','multicore','multi core'],
+    fb:'Multi-core processor — each core can independently execute its own thread, enabling true parallel execution.' },
+
+  // ── SECTION C: MATCH (5 questions as individual pairs) ───────────────────
+  { type:'match', section:'SECTION C · MATCH THE COLUMN', time:30,
+    q:'Match each CPU component to its correct function.',
+    pairs:[
+      {L:'Program Counter (PC)', R:'Holds address of NEXT instruction'},
+      {L:'Instruction Register (IR)', R:'Holds CURRENT instruction being decoded'},
+      {L:'MAR', R:'Holds memory ADDRESS to be accessed'},
+      {L:'MDR', R:'Holds DATA read from or written to memory'},
+      {L:'Accumulator (AC)', R:'Stores RESULT of ALU operations'},
+    ],
+    fb:'Key: PC=next address, IR=current instruction, MAR=memory address, MDR=actual data, AC=ALU result.' },
+
+  // ── SECTION D: SHORT ANSWER (4 questions) ────────────────────────────────
+  { type:'short', section:'SECTION D · SHORT ANSWER', time:60,
+    q:'Outline the function of the accumulator. [2 marks]',
+    modelAns:'✓ Stores intermediate arithmetic and logic results / holds operand data; [1]\n✓ Reduces the number of memory accesses by holding intermediate results; [1]\n\nAlternative: Acts as a temporary storage location; which stores values and results from arithmetic and logical operations;',
+    fb:'Two distinct points needed: WHAT it stores (arithmetic/logic results) and WHY (reduces memory accesses).' },
+  { type:'short', section:'SECTION D · SHORT ANSWER', time:60,
+    q:'State two differences between the address bus and the data bus. [2 marks]',
+    modelAns:'✓ Address bus is unidirectional (CPU→memory only); data bus is bidirectional (CPU↔memory); [1]\n✓ Address bus carries memory addresses; data bus carries actual data/instructions; [1]',
+    fb:'Direction (uni vs bi-directional) and content (addresses vs data) are the two key differences.' },
+  { type:'short', section:'SECTION D · SHORT ANSWER', time:60,
+    q:'Outline one reason a multi-core processor performs better for running multiple applications. [2 marks]',
+    modelAns:'✓ A multi-core processor has multiple independent processing units/cores; [1]\n✓ Each core can execute its own thread simultaneously (true parallelism), so multiple apps run concurrently; [1]',
+    fb:'Link TWO ideas: multiple independent cores PLUS the result (simultaneous/parallel execution).' },
+  { type:'short', section:'SECTION D · SHORT ANSWER', time:60,
+    q:'Outline why a GPU is recommended for training a deep learning neural network. [2 marks]',
+    modelAns:'✓ Deep learning involves many matrix multiplications and parallel operations; [1]\n✓ GPUs have thousands of smaller cores designed for parallel processing, significantly speeding up training; [1]',
+    fb:'Link: what AI needs (matrix ops) + what GPU provides (parallel cores). "Parallel" is the key word.' },
+];
+
+// ── QUIZ STATE ─────────────────────────────────────────────────────────────
+let qName='', qClass='', qi=0, totalScore=0, timerInterval=null, timeLeft=0;
+let mcqRight=0, fillRight=0, matchRight=0;
+let mcqTotal=0, fillTotal=0;
+let activeMatchL=null, matchAnswers={}, matchChecked=false;
+const CIRC=138.23; // 2π×22
+
+// ── QUIZ START ─────────────────────────────────────────────────────────────
+function startQuiz() {
+  const n = document.getElementById('qName').value.trim();
+  if (!n) { alert('Please enter your name.'); return; }
+  qName = n; qClass = document.getElementById('qClass').value.trim() || 'Not specified';
+  document.getElementById('studentBadge').style.display='block';
+  document.getElementById('badgeName').textContent = qName;
+  qi = 0; totalScore = 0; mcqRight = 0; fillRight = 0; matchRight = 0;
+  mcqTotal = 0; fillTotal = 0;
+  document.getElementById('nameScreen').style.display='none';
+  document.getElementById('quizShell').style.display='flex';
+  renderQ();
+}
+
+function renderQ() {
+  if (qi >= QUESTIONS.length) { showResults(); return; }
+  const q = QUESTIONS[qi];
+  clearTimer();
+
+  // header strip
+  const pct = Math.round((qi / QUESTIONS.length) * 100);
+  document.getElementById('qNum').textContent = 'Q' + (qi+1) + '/' + QUESTIONS.length;
+  document.getElementById('qProgFill').style.width = Math.max(pct,3) + '%';
+  document.getElementById('qScorePill').textContent = totalScore + ' pts';
+  document.getElementById('qTypeBadge').textContent = {mcq:'MCQ',fill:'FILL BLANK',match:'MATCH',short:'SHORT ANSWER'}[q.type];
+  document.getElementById('qSectionLbl').textContent = q.section;
+  document.getElementById('qText').textContent = q.q;
+
+  // clear feedback
+  const fb = document.getElementById('fbBar');
+  fb.className = 'feedback-bar'; fb.style.display='none';
+
+  // render options
+  const optsEl = document.getElementById('qOpts');
+  optsEl.innerHTML = '';
+
+  if (q.type === 'mcq') {
+    mcqTotal++;
+    optsEl.style.gridTemplateColumns = '1fr 1fr';
+    const letters = ['A','B','C','D'];
+    q.opts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+      btn.onclick = () => selectMCQ(i, btn);
+      optsEl.appendChild(btn);
+    });
+
+  } else if (q.type === 'fill') {
+    fillTotal++;
+    optsEl.style.gridTemplateColumns = '1fr';
+    const wrap = document.createElement('div');
+    wrap.className = 'fill-input-wrap';
+    const parts = q.q.split('___');
+    wrap.innerHTML = `
+      <div class="fill-sentence">${parts[0]}<span class="fill-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>${parts[1]||''}</div>
+      <input class="fill-input" id="fillInp" type="text" placeholder="Type your answer..." autocomplete="off" />
+      <button class="fill-submit-btn" onclick="submitFill()">Submit ✓</button>`;
+    optsEl.appendChild(wrap);
+    setTimeout(() => { const el=document.getElementById('fillInp'); if(el) el.focus(); }, 100);
+    document.getElementById('fillInp').addEventListener('keydown', e => { if(e.key==='Enter') submitFill(); });
+
+  } else if (q.type === 'match') {
+    optsEl.style.gridTemplateColumns = '1fr';
+    activeMatchL = null; matchAnswers = {}; matchChecked = false;
+    const wrap = document.createElement('div');
+    wrap.className = 'match-wrap';
+    const shuffledR = [...q.pairs].sort(() => Math.random() - 0.5);
+    wrap.innerHTML = `
+      <div>
+        <div class="match-col-hd">Column A — Terms</div>
+        ${q.pairs.map((p,i)=>`<div class="match-item" id="mL-${i}" onclick="selMatchL(${i})">${p.L}</div>`).join('')}
+      </div>
+      <div>
+        <div class="match-col-hd">Column B — Definitions</div>
+        ${shuffledR.map((p,i)=>`<div class="match-item" id="mR-${i}" data-correct="${q.pairs.findIndex(x=>x.R===p.R)}" onclick="selMatchR(${i})">${p.R}</div>`).join('')}
+      </div>`;
+    optsEl.appendChild(wrap);
+    // add check button below grid
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'fill-submit-btn'; checkBtn.style.cssText='grid-column:1/-1;max-width:200px;margin:0 auto;';
+    checkBtn.textContent = 'Check Matches ✓';
+    checkBtn.id = 'matchCheckBtn';
+    checkBtn.onclick = checkMatch;
+    optsEl.appendChild(checkBtn);
+
+  } else if (q.type === 'short') {
+    optsEl.style.gridTemplateColumns = '1fr';
+    const wrap = document.createElement('div');
+    wrap.className = 'short-wrap';
+    wrap.innerHTML = `
+      <textarea class="short-ta" id="shortTa" placeholder="Write your IB-style answer here using correct terminology..."></textarea>
+      <button class="show-model-btn" onclick="toggleModel()">Show Model Answer</button>
+      <div class="model-ans" id="modelAns">
+        <div class="ma-label">MODEL ANSWER</div>
+        <div class="ma-text">${q.modelAns.replace(/\n/g,'<br>')}</div>
+      </div>
+      <button class="fill-submit-btn" onclick="submitShort()">Continue →</button>`;
+    optsEl.appendChild(wrap);
+  }
+
+  startTimer(q.time, q.type);
+}
+
+// ── TIMER ──────────────────────────────────────────────────────────────────
+function startTimer(secs, type) {
+  timeLeft = secs;
+  updateTimerUI(secs, secs);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI(timeLeft, secs);
+    if (timeLeft <= 0) {
+      clearTimer();
+      if (type === 'mcq') autoFailMCQ();
+      else if (type === 'fill') submitFill(true);
+      else if (type === 'match') checkMatch(true);
+      else if (type === 'short') submitShort();
+    }
+  }, 1000);
+}
+
+function updateTimerUI(t, max) {
+  document.getElementById('timerNum').textContent = t;
+  const offset = CIRC * (1 - t/max);
+  document.getElementById('timerCircle').style.strokeDashoffset = offset;
+  document.getElementById('timerCircle').style.stroke = t > max*0.5 ? '#00c8aa' : t > max*0.25 ? '#ffd700' : '#ef476f';
+}
+
+function clearTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+// ── MCQ ────────────────────────────────────────────────────────────────────
+function selectMCQ(idx, btn) {
+  if (document.getElementById('fbBar').classList.contains('show')) return;
+  clearTimer();
+  const q = QUESTIONS[qi];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.disabled = true; });
+  const pts = Math.round((timeLeft / q.time) * 15) + 5;
+  if (idx === q.ans) {
+    btn.classList.add('correct');
+    totalScore += pts; mcqRight++;
+    showFB(true, q.fb, '+' + pts + ' pts');
+  } else {
+    btn.classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    showFB(false, 'Correct: <strong>' + q.opts[q.ans] + '</strong>. ' + q.fb, '0 pts');
+  }
+}
+
+function autoFailMCQ() {
+  const q = QUESTIONS[qi];
+  document.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+  document.querySelectorAll('.quiz-opt')[q.ans].classList.add('correct');
+  showFB(false, 'Time\'s up! Correct: <strong>' + q.opts[q.ans] + '</strong>. ' + q.fb, '0 pts');
+}
+
+// ── FILL ───────────────────────────────────────────────────────────────────
+function submitFill(timeout=false) {
+  clearTimer();
+  const q = QUESTIONS[qi];
+  const inp = document.getElementById('fillInp');
+  if (!inp) return;
+  const val = inp ? inp.value.trim().toLowerCase() : '';
+  inp.disabled = true;
+  document.querySelector('.fill-submit-btn') && (document.querySelector('.fill-submit-btn').disabled = true);
+  const correct = !timeout && q.answers.some(a => val === a);
+  const pts = correct ? Math.round((timeLeft / q.time) * 12) + 8 : 0;
+  if (correct) { fillRight++; totalScore += pts; }
+  showFB(correct,
+    correct ? q.fb : 'Correct answer: <strong>' + q.blank + '</strong>. ' + q.fb,
+    correct ? '+' + pts + ' pts' : '0 pts');
+}
+
+// ── MATCH ──────────────────────────────────────────────────────────────────
+function selMatchL(i) {
+  document.querySelectorAll('[id^="mL-"]').forEach(e => e.classList.remove('sel'));
+  activeMatchL = i;
+  document.getElementById('mL-' + i).classList.add('sel');
+}
+
+function selMatchR(i) {
+  if (activeMatchL === null) return;
+  matchAnswers[activeMatchL] = i;
+  document.querySelectorAll('[id^="mL-"]').forEach(e => e.classList.remove('sel'));
+  document.getElementById('mL-' + activeMatchL).classList.add('correct');
+  document.getElementById('mR-' + i).classList.add('sel');
+  activeMatchL = null;
+}
+
+function checkMatch(timeout=false) {
+  if (matchChecked) return;
+  matchChecked = true;
+  clearTimer();
+  const q = QUESTIONS[qi];
+  let correct = 0;
+  q.pairs.forEach((_, li) => {
+    const ri = matchAnswers[li];
+    if (ri !== undefined) {
+      const rEl = document.getElementById('mR-' + ri);
+      if (rEl && parseInt(rEl.dataset.correct) === li) {
+        correct++;
+        document.getElementById('mL-' + li).classList.add('correct');
+        rEl.classList.add('correct');
+      } else {
+        document.getElementById('mL-' + li).classList.add('wrong-m');
+        if (rEl) rEl.classList.add('wrong-m');
+      }
+    }
+  });
+  matchRight += correct;
+  const pts = correct * 4;
+  totalScore += pts;
+  const btn = document.getElementById('matchCheckBtn');
+  if (btn) btn.disabled = true;
+  showFB(correct === q.pairs.length,
+    correct + '/' + q.pairs.length + ' correct. ' + q.fb,
+    '+' + pts + ' pts');
+}
+
+// ── SHORT ──────────────────────────────────────────────────────────────────
+function toggleModel() {
+  const el = document.getElementById('modelAns');
+  const btn = el ? el.previousElementSibling : null;
+  if (!el) return;
+  const showing = el.style.display === 'block';
+  el.style.display = showing ? 'none' : 'block';
+  if (btn) btn.textContent = showing ? 'Show Model Answer' : 'Hide Model Answer';
+}
+
+function submitShort() {
+  clearTimer();
+  const q = QUESTIONS[qi];
+  showFB(true, q.fb, '—', true);
+}
+
+// ── FEEDBACK ───────────────────────────────────────────────────────────────
+function showFB(correct, text, pts, neutral=false) {
+  const bar = document.getElementById('fbBar');
+  bar.className = 'feedback-bar show ' + (neutral ? '' : correct ? 'correct-bar' : 'wrong-bar');
+  bar.style.display = 'flex';
+  document.getElementById('fbIcon').textContent = neutral ? '📝' : correct ? '✅' : '❌';
+  document.getElementById('fbText').innerHTML = text;
+  document.getElementById('fbPoints').textContent = pts;
+  document.getElementById('fbPoints').style.color = neutral ? '#8896cc' : correct ? '#06d6a0' : '#ef476f';
+}
+
+// ── NEXT ───────────────────────────────────────────────────────────────────
+function nextQ() {
+  qi++;
+  renderQ();
+}
+
+// ── RESULTS ────────────────────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('quizShell').style.display='none';
+  document.getElementById('resultsScreen').style.display='flex';
+  const maxPts = QUESTIONS.length * 20;
+  const pct = Math.round((totalScore / maxPts) * 100);
+  const grade = pct>=80?'A':pct>=65?'B':pct>=50?'C':pct>=35?'D':'F';
+  document.getElementById('resIcon').textContent = pct>=80?'🎉':pct>=65?'🏆':pct>=50?'👍':'📚';
+  document.getElementById('resScore').textContent = totalScore + ' / ' + maxPts;
+  document.getElementById('resGrade').textContent = 'Grade ' + grade + ' · ' + pct + '%';
+  document.getElementById('resBar').style.width = pct + '%';
+  document.getElementById('rbMCQ').textContent = mcqRight + '/' + mcqTotal;
+  document.getElementById('rbFill').textContent = fillRight + '/' + fillTotal;
+  document.getElementById('rbMatch').textContent = matchRight + '/5';
+
+  // Save to Google Sheets
+  if (SHEET_URL && SHEET_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+    fetch(SHEET_URL, {
+      method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name:qName, studentClass:qClass, mcq:mcqRight, fill:fillRight,
+        match:matchRight, total:totalScore, maxTotal:maxPts, percentage:pct, grade })
+    }).catch(() => {});
+    document.getElementById('savedPill').textContent = '✅ Results saved to Google Sheets';
+  } else {
+    document.getElementById('savedPill').textContent = '⚠️ Google Sheets not connected — scores not saved';
+    document.getElementById('savedPill').style.background = '#1a0a00';
+    document.getElementById('savedPill').style.color = '#f4a261';
+  }
+}
+
+function retryQuiz() {
+  document.getElementById('resultsScreen').style.display='none';
+  document.getElementById('nameScreen').style.display='flex';
+  qi=0; totalScore=0; mcqRight=0; fillRight=0; matchRight=0; mcqTotal=0; fillTotal=0;
+}
+</script>
+</body>
+</html>
