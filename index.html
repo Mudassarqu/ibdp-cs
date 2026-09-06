@@ -351,64 +351,136 @@ html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;bac
     </div>
     <div class="panel-body">
       <!-- ════ DIAGRAM ════ -->
-      <div class="diagram-box">
-        <div class="section-divider">CPU Architecture — Component Relationships</div>
-        <svg width="100%" viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <marker id="ah" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#00c8aa"/></marker>
-            <marker id="ap" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#c084fc"/></marker>
-            <marker id="ag" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#06d6a0"/></marker>
-          </defs>
-          <rect x="100" y="14" width="420" height="228" rx="14" fill="rgba(13,26,58,0.7)" stroke="#1e2645" stroke-width="1.5" stroke-dasharray="5,3"/>
-          <text x="310" y="32" text-anchor="middle" fill="#2a3560" font-family="Space Grotesk" font-size="9" font-weight="700" letter-spacing="3">C P U</text>
-          <rect x="122" y="44" width="160" height="86" rx="9" fill="rgba(0,180,216,0.1)" stroke="#00c8aa" stroke-width="2"/>
-          <text x="202" y="70" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="15" font-weight="800">ALU</text>
-          <text x="202" y="86" text-anchor="middle" fill="#4a5580" font-family="Space Grotesk" font-size="9">Arithmetic Logic Unit</text>
-          <text x="202" y="101" text-anchor="middle" fill="#3a4568" font-family="Space Grotesk" font-size="8.5">+ − × ÷ · AND · OR · NOT</text>
-          <text x="202" y="118" text-anchor="middle" fill="#3a4568" font-family="Space Grotesk" font-size="8.5">Result → Accumulator</text>
-          <rect x="338" y="44" width="160" height="86" rx="9" fill="rgba(192,132,252,0.1)" stroke="#c084fc" stroke-width="2"/>
-          <text x="418" y="70" text-anchor="middle" fill="#c084fc" font-family="Space Grotesk" font-size="15" font-weight="800">CU</text>
-          <text x="418" y="86" text-anchor="middle" fill="#4a5580" font-family="Space Grotesk" font-size="9">Control Unit</text>
-          <text x="418" y="101" text-anchor="middle" fill="#4a3568" font-family="Space Grotesk" font-size="8.5">Fetch → Decode → Execute</text>
-          <text x="418" y="118" text-anchor="middle" fill="#4a3568" font-family="Space Grotesk" font-size="8.5">Sends all control signals</text>
-          <line x1="338" y1="87" x2="284" y2="87" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ap)"/>
-          <text x="311" y="80" text-anchor="middle" fill="#6a4580" font-family="Space Grotesk" font-size="7">control</text>
-          <text x="310" y="160" text-anchor="middle" fill="#2a3560" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="2">R E G I S T E R S</text>
-          <rect x="110" y="168" width="66" height="56" rx="6" fill="rgba(6,214,160,0.08)" stroke="#06d6a0" stroke-width="1.5"/>
-          <text x="143" y="188" text-anchor="middle" fill="#06d6a0" font-family="Space Grotesk" font-size="11" font-weight="800">PC</text>
-          <text x="143" y="202" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Program</text>
-          <text x="143" y="213" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Counter</text>
-          <rect x="182" y="168" width="66" height="56" rx="6" fill="rgba(0,180,216,0.08)" stroke="#00c8aa" stroke-width="1.5"/>
-          <text x="215" y="188" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="11" font-weight="800">IR</text>
-          <text x="215" y="202" text-anchor="middle" fill="#1a4050" font-family="JetBrains Mono" font-size="7.5">Instruction</text>
-          <text x="215" y="213" text-anchor="middle" fill="#1a4050" font-family="JetBrains Mono" font-size="7.5">Register</text>
-          <rect x="254" y="168" width="66" height="56" rx="6" fill="rgba(244,162,97,0.08)" stroke="#f4a261" stroke-width="1.5"/>
-          <text x="287" y="188" text-anchor="middle" fill="#f4a261" font-family="Space Grotesk" font-size="11" font-weight="800">MAR</text>
-          <text x="287" y="202" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7.5">Memory</text>
-          <text x="287" y="213" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7.5">Addr Reg</text>
-          <rect x="326" y="168" width="66" height="56" rx="6" fill="rgba(239,71,111,0.08)" stroke="#ef476f" stroke-width="1.5"/>
-          <text x="359" y="188" text-anchor="middle" fill="#ef476f" font-family="Space Grotesk" font-size="11" font-weight="800">MDR</text>
-          <text x="359" y="202" text-anchor="middle" fill="#502030" font-family="JetBrains Mono" font-size="7.5">Memory</text>
-          <text x="359" y="213" text-anchor="middle" fill="#502030" font-family="JetBrains Mono" font-size="7.5">Data Reg</text>
-          <rect x="398" y="168" width="66" height="56" rx="6" fill="rgba(6,214,160,0.08)" stroke="#06d6a0" stroke-width="1.5"/>
-          <text x="431" y="188" text-anchor="middle" fill="#06d6a0" font-family="Space Grotesk" font-size="11" font-weight="800">AC</text>
-          <text x="431" y="202" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Accumu-</text>
-          <text x="431" y="213" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">lator</text>
-          <path d="M 282 130 Q 431 148 431 166" fill="none" stroke="#06d6a0" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#ag)"/>
-          <path d="M 143 224 Q 143 238 287 238 Q 287 226 287 224" fill="none" stroke="#06d6a0" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#ag)"/>
-          <text x="215" y="236" text-anchor="middle" fill="#1a4030" font-family="Space Grotesk" font-size="7">PC → MAR</text>
-          <rect x="105" y="244" width="410" height="11" rx="3" fill="rgba(0,180,216,0.1)" stroke="#00c8aa50" stroke-width="1"/>
-          <text x="310" y="253" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="7.5" font-weight="700">ADDRESS BUS — unidirectional → (CPU to Memory)</text>
-          <rect x="560" y="44" width="110" height="152" rx="9" fill="rgba(244,162,97,0.07)" stroke="#f4a26180" stroke-width="1.5"/>
-          <text x="615" y="66" text-anchor="middle" fill="#f4a261" font-family="Space Grotesk" font-size="12" font-weight="700">RAM</text>
-          <rect x="572" y="74" width="86" height="11" rx="2" fill="rgba(244,162,97,0.15)"/>
-          <text x="615" y="83" text-anchor="middle" fill="#605030" font-family="JetBrains Mono" font-size="7">addr → data</text>
-          <rect x="572" y="90" width="86" height="11" rx="2" fill="rgba(244,162,97,0.1)"/>
-          <text x="615" y="99" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7">addr → data</text>
-          <rect x="572" y="106" width="86" height="11" rx="2" fill="rgba(244,162,97,0.07)"/>
-          <line x1="515" y1="249" x2="560" y2="100" stroke="#00c8aa60" stroke-width="1.5" marker-end="url(#ah)"/>
-          <line x1="515" y1="254" x2="560" y2="120" stroke="#06d6a060" stroke-width="1" stroke-dasharray="3,3"/>
-        </svg>
+      <div class="diagram-box" style="padding:20px 16px 16px;">
+
+        <!-- TITLE ROW -->
+        <div style="text-align:center;margin-bottom:18px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:2px;color:#3a4870;text-transform:uppercase;">CPU Architecture</span>
+        </div>
+
+        <!-- MAIN LAYOUT: CPU box + RAM box side by side -->
+        <div style="display:flex;gap:16px;align-items:stretch;">
+
+          <!-- ── CPU OUTER BOX ── -->
+          <div style="flex:1;border:2px dashed #1e2a4a;border-radius:14px;padding:16px 14px 14px;position:relative;background:rgba(10,14,30,0.6);">
+            <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#07091a;padding:0 10px;font-size:10px;font-weight:800;letter-spacing:3px;color:#2a3a60;">CPU</div>
+
+            <!-- ROW 1: ALU + CU -->
+            <div style="display:flex;gap:12px;margin-bottom:14px;">
+
+              <!-- ALU -->
+              <div style="flex:1;background:rgba(0,200,170,0.1);border:2px solid #00c8aa;border-radius:10px;padding:14px 10px;text-align:center;">
+                <div style="font-size:22px;font-weight:800;color:#00c8aa;letter-spacing:-0.5px;">ALU</div>
+                <div style="font-size:11px;font-weight:600;color:#4a8878;margin-top:3px;">Arithmetic Logic Unit</div>
+                <div style="margin-top:8px;font-size:11px;color:#3a6a60;line-height:1.6;">
+                  Performs all<br>
+                  <strong style="color:#00c8aa;">+ − × ÷</strong> and<br>
+                  <strong style="color:#00c8aa;">AND · OR · NOT</strong>
+                </div>
+              </div>
+
+              <!-- Arrow CU → ALU -->
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0;width:36px;">
+                <div style="font-size:9px;color:#7a5a9a;font-weight:700;text-align:center;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.5px;">control</div>
+                <div style="font-size:18px;color:#c084fc;">←</div>
+              </div>
+
+              <!-- CU -->
+              <div style="flex:1;background:rgba(192,132,252,0.1);border:2px solid #c084fc;border-radius:10px;padding:14px 10px;text-align:center;">
+                <div style="font-size:22px;font-weight:800;color:#c084fc;letter-spacing:-0.5px;">CU</div>
+                <div style="font-size:11px;font-weight:600;color:#7a5a9a;margin-top:3px;">Control Unit</div>
+                <div style="margin-top:8px;font-size:11px;color:#5a3a7a;line-height:1.6;">
+                  Fetch → Decode<br>
+                  → Execute<br>
+                  Sends control signals
+                </div>
+              </div>
+
+            </div>
+
+            <!-- REGISTERS LABEL -->
+            <div style="text-align:center;font-size:9px;font-weight:800;letter-spacing:2.5px;color:#2a3560;margin-bottom:8px;">REGISTERS</div>
+
+            <!-- ROW 2: 5 Registers -->
+            <div style="display:flex;gap:6px;">
+
+              <div style="flex:1;background:rgba(6,214,160,0.1);border:2px solid #06d6a0;border-radius:8px;padding:10px 4px;text-align:center;">
+                <div style="font-size:15px;font-weight:800;color:#06d6a0;">PC</div>
+                <div style="font-size:9.5px;color:#2a5040;margin-top:3px;line-height:1.4;">Program<br>Counter</div>
+              </div>
+
+              <div style="flex:1;background:rgba(0,200,170,0.1);border:2px solid #00c8aa;border-radius:8px;padding:10px 4px;text-align:center;">
+                <div style="font-size:15px;font-weight:800;color:#00c8aa;">IR</div>
+                <div style="font-size:9.5px;color:#1a4050;margin-top:3px;line-height:1.4;">Instruction<br>Register</div>
+              </div>
+
+              <div style="flex:1;background:rgba(244,162,97,0.1);border:2px solid #f4a261;border-radius:8px;padding:10px 4px;text-align:center;">
+                <div style="font-size:15px;font-weight:800;color:#f4a261;">MAR</div>
+                <div style="font-size:9.5px;color:#504020;margin-top:3px;line-height:1.4;">Memory<br>Addr Reg</div>
+              </div>
+
+              <div style="flex:1;background:rgba(239,71,111,0.1);border:2px solid #ef476f;border-radius:8px;padding:10px 4px;text-align:center;">
+                <div style="font-size:15px;font-weight:800;color:#ef476f;">MDR</div>
+                <div style="font-size:9.5px;color:#502030;margin-top:3px;line-height:1.4;">Memory<br>Data Reg</div>
+              </div>
+
+              <div style="flex:1;background:rgba(6,214,160,0.1);border:2px solid #06d6a0;border-radius:8px;padding:10px 4px;text-align:center;">
+                <div style="font-size:15px;font-weight:800;color:#06d6a0;">AC</div>
+                <div style="font-size:9.5px;color:#2a5040;margin-top:3px;line-height:1.4;">Accumu-<br>lator</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── THREE BUSES (vertical, between CPU and RAM) ── -->
+          <div style="display:flex;flex-direction:column;justify-content:center;gap:8px;width:160px;flex-shrink:0;">
+            <div style="background:rgba(0,200,170,0.08);border:1.5px solid #00c8aa50;border-radius:8px;padding:8px 10px;text-align:center;">
+              <div style="font-size:11px;font-weight:800;color:#00c8aa;">ADDRESS BUS</div>
+              <div style="font-size:10px;color:#2a5040;margin-top:2px;">→ one-way</div>
+              <div style="font-size:9.5px;color:#1a3a30;margin-top:2px;">Carries memory addresses</div>
+            </div>
+            <div style="background:rgba(6,214,160,0.08);border:1.5px solid #06d6a050;border-radius:8px;padding:8px 10px;text-align:center;">
+              <div style="font-size:11px;font-weight:800;color:#06d6a0;">DATA BUS</div>
+              <div style="font-size:10px;color:#2a5040;margin-top:2px;">↔ two-way</div>
+              <div style="font-size:9.5px;color:#1a3a30;margin-top:2px;">Carries actual data</div>
+            </div>
+            <div style="background:rgba(192,132,252,0.08);border:1.5px solid #c084fc50;border-radius:8px;padding:8px 10px;text-align:center;">
+              <div style="font-size:11px;font-weight:800;color:#c084fc;">CONTROL BUS</div>
+              <div style="font-size:10px;color:#4a2a6a;margin-top:2px;">↔ two-way</div>
+              <div style="font-size:9.5px;color:#3a1a5a;margin-top:2px;">Carries control signals</div>
+            </div>
+          </div>
+
+          <!-- ── RAM BOX ── -->
+          <div style="width:110px;flex-shrink:0;background:rgba(244,162,97,0.07);border:2px solid #f4a26160;border-radius:12px;padding:14px 10px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:20px;font-weight:800;color:#f4a261;margin-bottom:8px;">RAM</div>
+            <div style="font-size:10px;color:#6a5030;line-height:1.6;">Primary<br>Memory</div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;">
+              <div style="background:rgba(244,162,97,0.2);border-radius:3px;height:8px;"></div>
+              <div style="background:rgba(244,162,97,0.15);border-radius:3px;height:8px;"></div>
+              <div style="background:rgba(244,162,97,0.1);border-radius:3px;height:8px;"></div>
+              <div style="background:rgba(244,162,97,0.06);border-radius:3px;height:8px;"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LEGEND ROW -->
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #1a2040;justify-content:center;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#4a5580;">
+            <div style="width:12px;height:12px;border-radius:3px;background:#00c8aa30;border:1.5px solid #00c8aa;"></div>ALU — does the maths
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#4a5580;">
+            <div style="width:12px;height:12px;border-radius:3px;background:#c084fc30;border:1.5px solid #c084fc;"></div>CU — controls everything
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#4a5580;">
+            <div style="width:12px;height:12px;border-radius:3px;background:#06d6a030;border:1.5px solid #06d6a0;"></div>PC / IR / AC — key registers
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#4a5580;">
+            <div style="width:12px;height:12px;border-radius:3px;background:#f4a26130;border:1.5px solid #f4a261;"></div>MAR / MDR — memory interface
+          </div>
+        </div>
+
       </div>
 
       <!-- ════ SUB-TOPIC TABS ════ -->
@@ -1263,8 +1335,7 @@ html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;bac
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────────────
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzaOkjOdlEZLBOw82UDq9WCfg032Zd9QGIH-W4fBqqWIwveEdj1KAru78a70JlOiaCBiw/exec';;
-
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzaOkjOdlEZLBOw82UDq9WCfg032Zd9QGIH-W4fBqqWIwveEdj1KAru78a70JlOiaCBiw/exec';
 // ── PANEL NAVIGATION ───────────────────────────────────────────────────────
 function goPanel(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
