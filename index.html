@@ -214,6 +214,87 @@ html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;bac
 /* ── MISC SHARED ── */
 .section-divider{font-size:10px;font-weight:700;letter-spacing:2px;color:#2a3560;text-transform:uppercase;margin:18px 0 10px;display:flex;align-items:center;gap:8px;}
 .section-divider::after{content:'';flex:1;height:1px;background:#1a2240;}
+
+/* ── SUBTOPIC TABS ── */
+.subtab-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px;}
+.subtab{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #1e2645;background:#0d1224;color:#4a5580;font-family:'Space Grotesk',sans-serif;transition:all .15s;}
+.subtab:hover{border-color:#00c8aa;color:#00c8aa;}
+.subtab.active{background:#00c8aa20;border-color:#00c8aa;color:#00c8aa;}
+.subtopic{display:none;}
+.subtopic.active{display:block;}
+
+/* ── DEFINITION CARD ── */
+.def-card{background:linear-gradient(135deg,rgba(0,200,170,0.06),rgba(0,200,170,0.02));border:1px solid rgba(var(--dc-rgb,0,200,170),.25);border-left:4px solid var(--dc,#00c8aa);border-radius:10px;padding:16px 18px;margin-bottom:16px;}
+.def-label{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--dc,#00c8aa);margin-bottom:8px;}
+.def-text{font-size:13px;color:#8896cc;line-height:1.75;}
+.def-text strong{color:#e8eeff;}
+
+/* ── NOTES GRID ── */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.note-block{background:#0d1224;border:1px solid #1e2645;border-radius:10px;padding:14px;border-top:2px solid var(--nb,#00c8aa);}
+.nb-title{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--nb,#00c8aa);text-transform:uppercase;margin-bottom:10px;}
+.nb-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12px;color:#6272a0;line-height:1.5;}
+.nb-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;margin-top:1px;white-space:nowrap;}
+
+/* ── EXAM NOTE ── */
+.exam-note{background:#0a0e1a;border:1px solid #2a3560;border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+.en-label{font-size:10px;font-weight:700;letter-spacing:.5px;color:#ffd700;margin-bottom:8px;}
+.en-text{font-size:12.5px;color:#7a88a8;line-height:1.7;}
+
+/* ── REGISTER CARDS ── */
+.reg-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.reg-card{background:#0d1224;border:1px solid #1e2645;border-radius:10px;padding:14px 16px;border-left:4px solid var(--rc,#06d6a0);}
+.rc-name{font-size:18px;font-weight:800;color:var(--rc,#06d6a0);display:inline-block;margin-right:10px;}
+.rc-full{font-size:12px;color:#4a5580;display:inline-block;margin-bottom:6px;}
+.rc-def{font-size:12.5px;color:#6272a0;line-height:1.65;margin-bottom:8px;}
+.rc-def strong{color:#e8eeff;}
+.rc-exam{font-size:11.5px;color:#3a5040;background:#001a0e;border-radius:6px;padding:8px 11px;border-left:2px solid var(--rc,#06d6a0);font-style:italic;line-height:1.55;}
+
+/* ── FDE DETAILED ── */
+.fde-detailed{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
+.fde-phase{background:#0d1224;border:1px solid #1e2645;border-radius:10px;overflow:hidden;}
+.fde-phase-hd{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#07091a;border-bottom:1px solid #1e2645;}
+.fp-num{width:30px;height:30px;border-radius:50%;background:rgba(0,200,170,0.15);border:2px solid #00c8aa;color:#00c8aa;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fp-name{font-size:14px;font-weight:800;}
+.fp-sub{font-size:11px;color:#4a5580;margin-top:2px;}
+.fp-steps{padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+.fp-step{font-size:12.5px;color:#6272a0;display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.fp-step strong{color:#e8eeff;}
+.fp-reg{border:1px solid;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+
+/* ── COMPARE TABLE ── */
+.compare-table{background:#0d1224;border:1px solid #1e2645;border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.ct-hd{background:#07091a;padding:10px 16px;font-size:11px;font-weight:700;color:#4a5580;letter-spacing:.5px;border-bottom:1px solid #1e2645;}
+.ct-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ct-table th{background:#0a0d1e;padding:8px 12px;text-align:left;font-weight:700;font-size:11px;color:#4a5580;border-bottom:1px solid #1e2645;}
+.ct-table td{padding:8px 12px;color:#6272a0;border-bottom:1px solid #131d2e;}
+.ct-table tr:last-child td{border-bottom:none;}
+.ct-table tr:nth-child(even) td{background:rgba(255,255,255,0.01);}
+
+/* ── CASE STUDY PANEL ── */
+.cs-block{background:#0d1224;border:1px solid #1e2645;border-radius:12px;margin-bottom:18px;overflow:hidden;}
+.cs-context-bar{background:linear-gradient(90deg,#0d1a3a,#152040);padding:12px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1e2645;}
+.cs-ctx-label{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--csb,#00c8aa);background:rgba(0,200,170,0.1);padding:3px 9px;border-radius:100px;white-space:nowrap;}
+.cs-ctx-title{font-size:13px;font-weight:700;color:#e8eeff;}
+.cs-context{padding:14px 18px;font-size:12.5px;color:#6272a0;line-height:1.7;border-bottom:1px solid #131d2e;background:#07091a;}
+.cs-context strong{color:#8896cc;}
+.cs-q-list{padding:14px 18px;display:flex;flex-direction:column;gap:12px;}
+.cs-q{background:#07091a;border:1px solid #131d2e;border-radius:9px;overflow:hidden;}
+.cs-q-hd{padding:12px 14px;display:flex;align-items:flex-start;gap:10px;}
+.cs-q-num{background:#1a2040;color:#00c8aa;font-size:10px;font-weight:800;padding:3px 9px;border-radius:100px;flex-shrink:0;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.cs-q-text{font-size:13px;font-weight:600;color:#e8eeff;line-height:1.5;flex:1;}
+.cs-marks{background:#1a2040;color:#4a5580;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;margin-left:6px;}
+.ib-kw-cs{display:inline-block;background:#ffd70020;border:1px solid #ffd700;color:#ffd700;font-weight:700;font-size:11px;padding:1px 7px;border-radius:4px;margin-right:3px;}
+.cs-ans-toggle{padding:8px 14px;font-size:11.5px;font-weight:700;color:#4a5580;cursor:pointer;background:#0d1224;border-top:1px solid #131d2e;transition:all .15s;user-select:none;}
+.cs-ans-toggle:hover{color:#00c8aa;background:#0a1220;}
+.cs-ans{display:none;padding:14px;background:#001810;border-top:1px solid #06d6a020;}
+.cs-ans-pts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.cs-pt{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#4ad8a8;line-height:1.55;}
+.cs-pt em{color:#2a5040;margin-left:4px;}
+.cs-tick{color:#06d6a0;flex-shrink:0;font-weight:700;}
+.cs-alt{font-size:11.5px;color:#2a5040;padding:6px 10px;background:#001208;border-radius:6px;margin-top:4px;}
+.cs-tip{font-size:12px;color:#8a7020;background:#1a1000;border:1px solid #ffd70020;border-radius:6px;padding:9px 11px;line-height:1.55;}
+.cs-tip strong{color:#ffd700;}
 </style>
 </head>
 <body>
@@ -250,6 +331,9 @@ html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;bac
         <span class="nav-icon">🎯</span>Kahoot Quiz<span class="nav-badge">20 Qs</span>
       </div>
     </div>
+      <div class="nav-item" onclick="goPanel('casestudies',this)">
+        <span class="nav-icon">📋</span>Case Studies<span class="nav-badge">4</span>
+      </div>
     <div class="sidebar-footer">
       SL: 11 hours · HL: 18 hours<br>First Assessment 2027
     </div>
@@ -266,70 +350,55 @@ html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;bac
       <div class="panel-sub">ALU · Control Unit · Registers · Buses · Processors · FDE Cycle</div>
     </div>
     <div class="panel-body">
-
-      <!-- CPU DIAGRAM -->
+      <!-- ════ DIAGRAM ════ -->
       <div class="diagram-box">
-        <div class="section-divider">CPU Architecture Diagram</div>
+        <div class="section-divider">CPU Architecture — Component Relationships</div>
         <svg width="100%" viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <marker id="ah" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#00c8aa"/></marker>
             <marker id="ap" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#c084fc"/></marker>
             <marker id="ag" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#06d6a0"/></marker>
           </defs>
-          <!-- CPU boundary -->
           <rect x="100" y="14" width="420" height="228" rx="14" fill="rgba(13,26,58,0.7)" stroke="#1e2645" stroke-width="1.5" stroke-dasharray="5,3"/>
           <text x="310" y="32" text-anchor="middle" fill="#2a3560" font-family="Space Grotesk" font-size="9" font-weight="700" letter-spacing="3">C P U</text>
-          <!-- ALU -->
           <rect x="122" y="44" width="160" height="86" rx="9" fill="rgba(0,180,216,0.1)" stroke="#00c8aa" stroke-width="2"/>
           <text x="202" y="70" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="15" font-weight="800">ALU</text>
           <text x="202" y="86" text-anchor="middle" fill="#4a5580" font-family="Space Grotesk" font-size="9">Arithmetic Logic Unit</text>
           <text x="202" y="101" text-anchor="middle" fill="#3a4568" font-family="Space Grotesk" font-size="8.5">+ − × ÷ · AND · OR · NOT</text>
           <text x="202" y="118" text-anchor="middle" fill="#3a4568" font-family="Space Grotesk" font-size="8.5">Result → Accumulator</text>
-          <!-- CU -->
           <rect x="338" y="44" width="160" height="86" rx="9" fill="rgba(192,132,252,0.1)" stroke="#c084fc" stroke-width="2"/>
           <text x="418" y="70" text-anchor="middle" fill="#c084fc" font-family="Space Grotesk" font-size="15" font-weight="800">CU</text>
           <text x="418" y="86" text-anchor="middle" fill="#4a5580" font-family="Space Grotesk" font-size="9">Control Unit</text>
           <text x="418" y="101" text-anchor="middle" fill="#4a3568" font-family="Space Grotesk" font-size="8.5">Fetch → Decode → Execute</text>
           <text x="418" y="118" text-anchor="middle" fill="#4a3568" font-family="Space Grotesk" font-size="8.5">Sends all control signals</text>
-          <!-- CU→ALU -->
           <line x1="338" y1="87" x2="284" y2="87" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ap)"/>
           <text x="311" y="80" text-anchor="middle" fill="#6a4580" font-family="Space Grotesk" font-size="7">control</text>
-          <!-- REGISTERS label -->
           <text x="310" y="160" text-anchor="middle" fill="#2a3560" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="2">R E G I S T E R S</text>
-          <!-- PC -->
           <rect x="110" y="168" width="66" height="56" rx="6" fill="rgba(6,214,160,0.08)" stroke="#06d6a0" stroke-width="1.5"/>
           <text x="143" y="188" text-anchor="middle" fill="#06d6a0" font-family="Space Grotesk" font-size="11" font-weight="800">PC</text>
           <text x="143" y="202" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Program</text>
           <text x="143" y="213" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Counter</text>
-          <!-- IR -->
           <rect x="182" y="168" width="66" height="56" rx="6" fill="rgba(0,180,216,0.08)" stroke="#00c8aa" stroke-width="1.5"/>
           <text x="215" y="188" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="11" font-weight="800">IR</text>
           <text x="215" y="202" text-anchor="middle" fill="#1a4050" font-family="JetBrains Mono" font-size="7.5">Instruction</text>
           <text x="215" y="213" text-anchor="middle" fill="#1a4050" font-family="JetBrains Mono" font-size="7.5">Register</text>
-          <!-- MAR -->
           <rect x="254" y="168" width="66" height="56" rx="6" fill="rgba(244,162,97,0.08)" stroke="#f4a261" stroke-width="1.5"/>
           <text x="287" y="188" text-anchor="middle" fill="#f4a261" font-family="Space Grotesk" font-size="11" font-weight="800">MAR</text>
           <text x="287" y="202" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7.5">Memory</text>
           <text x="287" y="213" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7.5">Addr Reg</text>
-          <!-- MDR -->
           <rect x="326" y="168" width="66" height="56" rx="6" fill="rgba(239,71,111,0.08)" stroke="#ef476f" stroke-width="1.5"/>
           <text x="359" y="188" text-anchor="middle" fill="#ef476f" font-family="Space Grotesk" font-size="11" font-weight="800">MDR</text>
           <text x="359" y="202" text-anchor="middle" fill="#502030" font-family="JetBrains Mono" font-size="7.5">Memory</text>
           <text x="359" y="213" text-anchor="middle" fill="#502030" font-family="JetBrains Mono" font-size="7.5">Data Reg</text>
-          <!-- AC -->
           <rect x="398" y="168" width="66" height="56" rx="6" fill="rgba(6,214,160,0.08)" stroke="#06d6a0" stroke-width="1.5"/>
           <text x="431" y="188" text-anchor="middle" fill="#06d6a0" font-family="Space Grotesk" font-size="11" font-weight="800">AC</text>
           <text x="431" y="202" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">Accumu-</text>
           <text x="431" y="213" text-anchor="middle" fill="#2a5040" font-family="JetBrains Mono" font-size="7.5">lator</text>
-          <!-- ALU→AC -->
           <path d="M 282 130 Q 431 148 431 166" fill="none" stroke="#06d6a0" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#ag)"/>
-          <!-- PC→MAR dotted -->
           <path d="M 143 224 Q 143 238 287 238 Q 287 226 287 224" fill="none" stroke="#06d6a0" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#ag)"/>
           <text x="215" y="236" text-anchor="middle" fill="#1a4030" font-family="Space Grotesk" font-size="7">PC → MAR</text>
-          <!-- THREE BUSES -->
           <rect x="105" y="244" width="410" height="11" rx="3" fill="rgba(0,180,216,0.1)" stroke="#00c8aa50" stroke-width="1"/>
           <text x="310" y="253" text-anchor="middle" fill="#00c8aa" font-family="Space Grotesk" font-size="7.5" font-weight="700">ADDRESS BUS — unidirectional → (CPU to Memory)</text>
-          <!-- RAM -->
           <rect x="560" y="44" width="110" height="152" rx="9" fill="rgba(244,162,97,0.07)" stroke="#f4a26180" stroke-width="1.5"/>
           <text x="615" y="66" text-anchor="middle" fill="#f4a261" font-family="Space Grotesk" font-size="12" font-weight="700">RAM</text>
           <rect x="572" y="74" width="86" height="11" rx="2" fill="rgba(244,162,97,0.15)"/>
@@ -337,100 +406,303 @@ html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;bac
           <rect x="572" y="90" width="86" height="11" rx="2" fill="rgba(244,162,97,0.1)"/>
           <text x="615" y="99" text-anchor="middle" fill="#504020" font-family="JetBrains Mono" font-size="7">addr → data</text>
           <rect x="572" y="106" width="86" height="11" rx="2" fill="rgba(244,162,97,0.07)"/>
-          <!-- bus lines to RAM -->
           <line x1="515" y1="249" x2="560" y2="100" stroke="#00c8aa60" stroke-width="1.5" marker-end="url(#ah)"/>
           <line x1="515" y1="254" x2="560" y2="120" stroke="#06d6a060" stroke-width="1" stroke-dasharray="3,3"/>
         </svg>
       </div>
 
-      <!-- COMPONENT CARDS -->
-      <div class="topic-grid">
-        <div class="topic-card" style="--c:#00c8aa">
-          <div class="tc-label">ALU</div>
-          <div class="tc-title">Arithmetic Logic Unit</div>
-          <div class="tc-body">Performs ALL calculations and logical decisions inside the CPU.</div>
-          <div class="tc-items">
-            <div class="tc-item"><div class="tc-dot"></div>Arithmetic: + − × ÷ on binary numbers</div>
-            <div class="tc-item"><div class="tc-dot"></div>Logical: AND, OR, NOT, XOR, comparisons</div>
-            <div class="tc-item"><div class="tc-dot"></div>All results go to the Accumulator (AC)</div>
+      <!-- ════ SUB-TOPIC TABS ════ -->
+      <div class="subtab-row" id="subTabs">
+        <button class="subtab active" onclick="showSub('alu',this)">ALU</button>
+        <button class="subtab" onclick="showSub('cu',this)">Control Unit</button>
+        <button class="subtab" onclick="showSub('registers',this)">Registers</button>
+        <button class="subtab" onclick="showSub('buses',this)">Buses</button>
+        <button class="subtab" onclick="showSub('processors',this)">Processors</button>
+        <button class="subtab" onclick="showSub('fde',this)">FDE Cycle</button>
+        <button class="subtab" onclick="showSub('gpu',this)">GPU</button>
+      </div>
+
+      <!-- ════ ALU ════ -->
+      <div class="subtopic active" id="sub-alu">
+        <div class="def-card" style="--dc:#00c8aa">
+          <div class="def-label">📖 IB Definition — Arithmetic Logic Unit (ALU)</div>
+          <div class="def-text">The <strong>Arithmetic Logic Unit (ALU)</strong> is the component of the CPU that performs all arithmetic operations (such as addition, subtraction, multiplication and division) and all logical operations (such as AND, OR, NOT and comparisons) on data. The ALU receives operands from registers, executes the operation directed by the Control Unit, and stores the result in the Accumulator.</div>
+        </div>
+        <div class="notes-grid">
+          <div class="note-block" style="--nb:#00c8aa">
+            <div class="nb-title">What the ALU Does</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#00c8aa20;color:#00c8aa">Arithmetic</span>Addition (+), Subtraction (−), Multiplication (×), Division (÷) on binary numbers</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#00c8aa20;color:#00c8aa">Logical</span>AND, OR, NOT, XOR — compares values, checks conditions (e.g. is A &gt; B?)</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#00c8aa20;color:#00c8aa">Result</span>Every operation's result is sent to the <strong>Accumulator (AC)</strong> for temporary storage</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#00c8aa20;color:#00c8aa">Control</span>The ALU does not decide what to do — it receives instructions from the Control Unit</div>
+          </div>
+          <div class="note-block" style="--nb:#c084fc">
+            <div class="nb-title">Why the ALU Matters</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Every app</span>Every application — from a calculator to a game to a browser — relies on ALU operations</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Speed</span>Modern ALUs can perform billions of operations per second, driven by the CPU clock</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Exam tip</span>If asked to "outline" ALU: state it performs arithmetic AND logical operations + give example</div>
           </div>
         </div>
-        <div class="topic-card" style="--c:#c084fc">
-          <div class="tc-label">CU</div>
-          <div class="tc-title">Control Unit</div>
-          <div class="tc-body">The manager of the CPU — coordinates all activity.</div>
-          <div class="tc-items">
-            <div class="tc-item"><div class="tc-dot"></div>Fetches instructions from memory</div>
-            <div class="tc-item"><div class="tc-dot"></div>Decodes instructions held in IR</div>
-            <div class="tc-item"><div class="tc-dot"></div>Sends control signals to all components</div>
-          </div>
-        </div>
-        <div class="topic-card" style="--c:#06d6a0">
-          <div class="tc-label">Registers — 5 types</div>
-          <div class="tc-title">Ultra-Fast CPU Storage</div>
-          <div class="tc-items">
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">PC</strong> — address of NEXT instruction</div>
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">IR</strong> — CURRENT instruction being decoded</div>
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">MAR</strong> — memory ADDRESS to access</div>
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">MDR</strong> — DATA read from / written to RAM</div>
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#e8eeff">AC</strong> — result of last ALU operation</div>
-          </div>
-        </div>
-        <div class="topic-card" style="--c:#f4a261">
-          <div class="tc-label">Buses — 3 types</div>
-          <div class="tc-title">Electrical Pathways</div>
-          <div class="tc-items">
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#00c8aa">Address Bus</strong> — addresses MAR→RAM · UNIDIRECTIONAL</div>
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#06d6a0">Data Bus</strong> — actual data MDR↔RAM · BIDIRECTIONAL</div>
-            <div class="tc-item"><div class="tc-dot"></div><strong style="color:#f4a261">Control Bus</strong> — read/write signals CU→all · BIDIRECTIONAL</div>
-          </div>
+        <div class="exam-note">
+          <div class="en-label">✏️ Exam Short Note — If asked "Describe the function of the ALU"</div>
+          <div class="en-text">The ALU (Arithmetic Logic Unit) is the component of the CPU responsible for performing all arithmetic operations such as addition and subtraction, and all logical operations such as AND, OR and NOT. The results of these operations are stored in the accumulator. The ALU receives operands from registers and is directed by the Control Unit.</div>
         </div>
       </div>
 
-      <!-- FDE CYCLE -->
-      <div class="section-divider" style="margin-top:16px;">Fetch–Decode–Execute Cycle</div>
-      <div class="fde-grid">
-        <div class="fde-step" style="border-top:3px solid #00c8aa">
-          <div class="fde-num" style="color:#00c8aa">STEP 1 · FETCH</div>
-          <div class="fde-title" style="color:#00c8aa">Fetch</div>
-          <div class="fde-pts">1. PC → MAR (address)<br>2. MAR → RAM via address bus<br>3. RAM → MDR via data bus<br>4. MDR → IR (instruction)<br>5. PC incremented (+1)</div>
+      <!-- ════ CONTROL UNIT ════ -->
+      <div class="subtopic" id="sub-cu">
+        <div class="def-card" style="--dc:#c084fc">
+          <div class="def-label">📖 IB Definition — Control Unit (CU)</div>
+          <div class="def-text">The <strong>Control Unit (CU)</strong> is the component of the CPU that coordinates and controls all activities of the processor and the flow of data between the CPU and other hardware. It fetches instructions from memory, decodes them to determine what action is required, and then issues control signals to the appropriate components to execute the instruction. It manages the Fetch–Decode–Execute cycle.</div>
         </div>
-        <div class="fde-step" style="border-top:3px solid #c084fc">
-          <div class="fde-num" style="color:#c084fc">STEP 2 · DECODE</div>
-          <div class="fde-title" style="color:#c084fc">Decode</div>
-          <div class="fde-pts">CU reads IR<br>Identifies the operation<br>Identifies operands<br>Sends control signals<br>Prepares components</div>
+        <div class="notes-grid">
+          <div class="note-block" style="--nb:#c084fc">
+            <div class="nb-title">CU Responsibilities</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Fetch</span>Directs the PC to send the next instruction's address to MAR, then retrieves instruction into IR</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Decode</span>Interprets the binary instruction in the IR — identifies the operation and operands needed</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Execute</span>Sends control signals to the ALU, registers, or memory to carry out the instruction</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Control Bus</span>All CU signals travel via the Control Bus to reach ALU, registers and memory</div>
+          </div>
+          <div class="note-block" style="--nb:#06d6a0">
+            <div class="nb-title">CU Analogy &amp; Key Facts</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Analogy</span>The CU is like an orchestra conductor — it does not play music itself, but directs every musician</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Clock</span>All CU operations are synchronised with the system clock — faster clock = more cycles/second</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Exam tip</span>CU questions often use "Outline the role of the CU" — say: coordinates, controls, fetches, decodes, executes</div>
+          </div>
         </div>
-        <div class="fde-step" style="border-top:3px solid #06d6a0">
-          <div class="fde-num" style="color:#06d6a0">STEP 3 · EXECUTE</div>
-          <div class="fde-title" style="color:#06d6a0">Execute</div>
-          <div class="fde-pts">ALU performs operation<br>Result stored in AC<br>May write result to RAM<br>Cycle repeats<br>Billions of times / second</div>
+        <div class="exam-note">
+          <div class="en-label">✏️ Exam Short Note — If asked "Outline the role of the Control Unit"</div>
+          <div class="en-text">The Control Unit (CU) is responsible for coordinating all operations within the CPU. It manages the Fetch–Decode–Execute cycle by fetching instructions from memory into the Instruction Register, decoding the instruction to determine what operation is required, and sending control signals to the appropriate components (such as the ALU or memory) to execute the instruction. The CU does not process data itself — it directs all other components.</div>
         </div>
       </div>
 
-      <!-- PROCESSORS -->
-      <div class="section-divider" style="margin-top:16px;">Processor Types &amp; GPU</div>
-      <div class="topic-grid">
-        <div class="topic-card" style="--c:#0099ff">
-          <div class="tc-label">Single-Core</div>
-          <div class="tc-title">Single-Core Processor</div>
-          <div class="tc-body">One processing unit — executes one instruction stream sequentially. Older computers. Cannot multitask genuinely.</div>
+      <!-- ════ REGISTERS ════ -->
+      <div class="subtopic" id="sub-registers">
+        <div class="def-card" style="--dc:#06d6a0">
+          <div class="def-label">📖 IB Definition — Registers</div>
+          <div class="def-text"><strong>Registers</strong> are small, extremely fast storage locations located directly within the CPU. They hold data, instructions, and addresses that are currently being used or processed by the CPU. Because registers are inside the CPU chip itself, accessing them is orders of magnitude faster than accessing RAM. There are five key registers in the IB syllabus: PC, IR, MAR, MDR, and AC.</div>
         </div>
-        <div class="topic-card" style="--c:#06d6a0">
-          <div class="tc-label">Multi-Core</div>
-          <div class="tc-title">Multi-Core Processor</div>
-          <div class="tc-body">Multiple independent cores on one chip (dual/quad/octa-core). Each core runs its own thread — true parallelism for multiple applications simultaneously.</div>
+
+        <div class="reg-cards">
+          <div class="reg-card" style="--rc:#06d6a0">
+            <div class="rc-name">PC</div>
+            <div class="rc-full">Program Counter</div>
+            <div class="rc-def">Holds the <strong>memory address of the next instruction</strong> to be fetched from RAM. After each fetch, the PC is automatically incremented (+1) to point to the following instruction, ensuring sequential execution unless a jump/branch instruction changes it.</div>
+            <div class="rc-exam">Exam answer: "The PC holds the address of the next instruction to be executed; it is incremented after each fetch to point to the subsequent instruction."</div>
+          </div>
+          <div class="reg-card" style="--rc:#00c8aa">
+            <div class="rc-name">IR</div>
+            <div class="rc-full">Instruction Register</div>
+            <div class="rc-def">Holds the <strong>current instruction being decoded and executed</strong>. Once an instruction is fetched from memory via the MDR, it is loaded into the IR where the Control Unit reads and interprets it to determine what operation to perform.</div>
+            <div class="rc-exam">Exam answer: "The IR holds the instruction that is currently being decoded by the Control Unit; it temporarily stores the instruction fetched from memory."</div>
+          </div>
+          <div class="reg-card" style="--rc:#f4a261">
+            <div class="rc-name">MAR</div>
+            <div class="rc-full">Memory Address Register</div>
+            <div class="rc-def">Holds the <strong>memory address to be accessed</strong> — either for reading an instruction or reading/writing data. The MAR is connected to the address bus; whatever address is in the MAR is sent to RAM to specify which memory location to access.</div>
+            <div class="rc-exam">Exam answer: "The MAR holds the address in memory that the CPU needs to access; this address is sent along the address bus to RAM."</div>
+          </div>
+          <div class="reg-card" style="--rc:#ef476f">
+            <div class="rc-name">MDR</div>
+            <div class="rc-full">Memory Data Register</div>
+            <div class="rc-def">Holds the <strong>data that has just been read from memory</strong>, or the data that is about to be written to memory. It acts as a buffer between the CPU and RAM. During a fetch, the instruction from RAM arrives in the MDR before being transferred to the IR.</div>
+            <div class="rc-exam">Exam answer: "The MDR temporarily stores data that has been read from or is to be written to memory; it acts as an interface between the CPU and RAM."</div>
+          </div>
+          <div class="reg-card" style="--rc:#06d6a0">
+            <div class="rc-name">AC</div>
+            <div class="rc-full">Accumulator</div>
+            <div class="rc-def">Holds the <strong>result of the most recent arithmetic or logical operation</strong> performed by the ALU. It serves as a temporary storage area for intermediate results, reducing the need to repeatedly write results back to slower RAM during a sequence of calculations.</div>
+            <div class="rc-exam">Exam answer: "The accumulator stores intermediate arithmetic and logic results; it reduces the number of memory accesses by holding results within the CPU."</div>
+          </div>
         </div>
-        <div class="topic-card" style="--c:#f4a261">
-          <div class="tc-label">Co-Processors</div>
-          <div class="tc-title">Co-Processors</div>
-          <div class="tc-body">Specialist chips that offload specific tasks from the CPU. Examples: GPU (graphics/AI), FPU (floating-point), NPU (neural networks), DSP (audio/video).</div>
-        </div>
-        <div class="topic-card" style="--c:#ef476f">
-          <div class="tc-label">GPU — A1.1.2</div>
-          <div class="tc-title">Graphics Processing Unit</div>
-          <div class="tc-body">Thousands of smaller cores for parallel computation. Used for: 3D gaming, AI/ML training (matrix ops), scientific simulation, video encoding. Key: SIMD parallel architecture.</div>
+
+        <div class="exam-note" style="margin-top:14px;">
+          <div class="en-label">✏️ Exam Short Note — If asked "State the difference between MAR and MDR"</div>
+          <div class="en-text">The MAR (Memory Address Register) holds the <em>address</em> in memory that the CPU wishes to access, and is connected to the address bus. The MDR (Memory Data Register) holds the actual <em>data</em> that was read from or is to be written to that address, and is connected to the data bus. The MAR specifies WHERE; the MDR holds WHAT.</div>
         </div>
       </div>
+
+      <!-- ════ BUSES ════ -->
+      <div class="subtopic" id="sub-buses">
+        <div class="def-card" style="--dc:#f4a261">
+          <div class="def-label">📖 IB Definition — System Buses</div>
+          <div class="def-text"><strong>Buses</strong> are sets of parallel electrical conductors (wires) that transfer data between the CPU, memory, and input/output devices. There are three distinct system buses: the Address Bus, the Data Bus, and the Control Bus. The width of a bus (number of parallel lines) determines how much data can be transferred in one cycle — a wider bus means faster data transfer.</div>
+        </div>
+        <div class="notes-grid">
+          <div class="note-block" style="--nb:#00c8aa">
+            <div class="nb-title">Address Bus</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#00c8aa20;color:#00c8aa">Direction</span><strong>Unidirectional</strong> — carries addresses only from CPU (MAR) → Memory/I/O devices. One-way only.</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#00c8aa20;color:#00c8aa">Content</span>Carries <strong>memory addresses</strong> — specifies which location in RAM to read from or write to</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#00c8aa20;color:#00c8aa">Width</span>Width determines addressable memory: a 32-bit address bus can address 2³² = 4GB of RAM</div>
+          </div>
+          <div class="note-block" style="--nb:#06d6a0">
+            <div class="nb-title">Data Bus</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Direction</span><strong>Bidirectional</strong> — carries data in both directions: CPU ↔ Memory ↔ I/O devices</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Content</span>Carries <strong>actual data and instructions</strong> between the MDR and memory or I/O</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Width</span>A 64-bit data bus transfers 64 bits per cycle — wider bus = more data per transfer</div>
+          </div>
+          <div class="note-block" style="--nb:#c084fc">
+            <div class="nb-title">Control Bus</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Direction</span><strong>Bidirectional</strong> — carries signals both to and from the Control Unit</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Content</span>Carries <strong>control signals</strong>: read, write, clock, interrupt, memory request, bus request</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Function</span>Coordinates and synchronises all CPU operations — tells components when to act</div>
+          </div>
+          <div class="note-block" style="--nb:#f4a261">
+            <div class="nb-title">Bus Width &amp; Performance</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">Key concept</span>Bus width = number of parallel wires. More wires = more bits transferred simultaneously</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">Example</span>8-bit bus → 8 bits/cycle. 64-bit bus → 64 bits/cycle. 8× faster data transfer</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">Bottleneck</span>A narrow bus can become a performance bottleneck even if the CPU itself is very fast</div>
+          </div>
+        </div>
+        <div class="exam-note">
+          <div class="en-label">✏️ Exam Short Note — If asked "Explain the difference between the address bus and the data bus"</div>
+          <div class="en-text">The address bus is unidirectional — it carries memory addresses only from the CPU to memory, specifying which location to access. The data bus is bidirectional — it carries actual data in both directions between the CPU and memory or I/O devices. The address bus specifies the location (WHERE); the data bus carries the content (WHAT). A wider bus in either case increases the amount of information that can be transferred per clock cycle.</div>
+        </div>
+      </div>
+
+      <!-- ════ PROCESSORS ════ -->
+      <div class="subtopic" id="sub-processors">
+        <div class="def-card" style="--dc:#0099ff">
+          <div class="def-label">📖 IB Definition — Processor Types</div>
+          <div class="def-text">A <strong>processor</strong> is an integrated circuit that executes program instructions. A <strong>single-core processor</strong> has one processing unit and executes instructions sequentially. A <strong>multi-core processor</strong> contains two or more independent processing units (cores) on a single chip, enabling true parallel execution of multiple instruction streams. A <strong>co-processor</strong> is a supplementary processor that handles specialised tasks to offload the main CPU.</div>
+        </div>
+        <div class="notes-grid">
+          <div class="note-block" style="--nb:#0099ff">
+            <div class="nb-title">Single-Core Processor</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#0099ff20;color:#0099ff">Definition</span>Contains one processing unit that executes one instruction stream at a time — sequential processing</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#0099ff20;color:#0099ff">Limitation</span>Cannot genuinely multitask — appears to by switching rapidly between tasks (time-slicing)</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#0099ff20;color:#0099ff">Use</span>Older computers, simple embedded systems, low-power devices where cost matters</div>
+          </div>
+          <div class="note-block" style="--nb:#06d6a0">
+            <div class="nb-title">Multi-Core Processor</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Definition</span>Multiple independent processor cores on a single chip (dual, quad, octa-core etc.)</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Advantage</span>True parallelism — each core executes its own thread simultaneously; improves performance for multi-threaded applications</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Limitation</span>Not all software is written to use multiple cores — poorly optimised apps see little benefit</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#06d6a020;color:#06d6a0">Use</span>Modern smartphones, laptops, desktops, servers — virtually all current computing</div>
+          </div>
+          <div class="note-block" style="--nb:#f4a261">
+            <div class="nb-title">Co-Processors</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">Definition</span>A specialist processor designed to handle a specific type of task, working alongside the main CPU</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">GPU</span>Graphics Processing Unit — thousands of small cores for parallel computation; used for rendering, AI</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">FPU</span>Floating Point Unit — handles decimal/floating-point arithmetic much faster than the main ALU</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">NPU</span>Neural Processing Unit — accelerates AI inference tasks (e.g. face recognition, voice assistants)</div>
+          </div>
+          <div class="note-block" style="--nb:#c084fc">
+            <div class="nb-title">Comparing Processor Types</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Single vs Multi</span>Single: sequential, simpler, cheaper. Multi: parallel, better performance, more complex, more power</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">Exam tip</span>When asked to compare, always use "whereas" or "however" to contrast clearly</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#c084fc20;color:#c084fc">IB link</span>Co-processors connect to A1.1.2 (GPU) and A4 (Machine Learning uses GPU/NPU)</div>
+          </div>
+        </div>
+        <div class="exam-note">
+          <div class="en-label">✏️ Exam Short Note — If asked "Outline one advantage of a multi-core processor over a single-core processor"</div>
+          <div class="en-text">A multi-core processor contains multiple independent processing units on a single chip; each core can execute its own thread of instructions simultaneously. This enables true parallel processing, meaning multiple applications or tasks can run concurrently without each having to wait for the other to finish, resulting in significantly improved performance for multi-threaded workloads.</div>
+        </div>
+      </div>
+
+      <!-- ════ FDE CYCLE ════ -->
+      <div class="subtopic" id="sub-fde">
+        <div class="def-card" style="--dc:#ffd700">
+          <div class="def-label">📖 IB Definition — Fetch–Decode–Execute Cycle</div>
+          <div class="def-text">The <strong>Fetch–Decode–Execute (FDE) cycle</strong> is the sequence of steps that the CPU continuously repeats to process instructions. During the <em>Fetch</em> phase, an instruction is retrieved from memory. During the <em>Decode</em> phase, the Control Unit interprets what the instruction requires. During the <em>Execute</em> phase, the instruction is carried out. This cycle repeats billions of times per second, driven by the system clock.</div>
+        </div>
+
+        <div class="fde-detailed">
+          <div class="fde-phase" style="--fp:#00c8aa">
+            <div class="fde-phase-hd">
+              <div class="fp-num">1</div>
+              <div>
+                <div class="fp-name" style="color:#00c8aa">FETCH</div>
+                <div class="fp-sub">Retrieve the instruction from memory</div>
+              </div>
+            </div>
+            <div class="fp-steps">
+              <div class="fp-step"><span class="fp-reg" style="border-color:#06d6a0;color:#06d6a0">PC</span>→<span class="fp-reg" style="border-color:#f4a261;color:#f4a261">MAR</span>The address of the next instruction is copied from the Program Counter to the Memory Address Register</div>
+              <div class="fp-step"><span class="fp-reg" style="border-color:#f4a261;color:#f4a261">MAR</span>→<span class="fp-reg" style="border-color:#ffd700;color:#ffd700">RAM</span>The address in MAR is sent along the address bus to RAM, requesting the instruction at that location</div>
+              <div class="fp-step"><span class="fp-reg" style="border-color:#ffd700;color:#ffd700">RAM</span>→<span class="fp-reg" style="border-color:#ef476f;color:#ef476f">MDR</span>RAM sends the instruction back along the data bus into the Memory Data Register</div>
+              <div class="fp-step"><span class="fp-reg" style="border-color:#ef476f;color:#ef476f">MDR</span>→<span class="fp-reg" style="border-color:#00c8aa;color:#00c8aa">IR</span>The instruction is transferred from MDR into the Instruction Register, ready for decoding</div>
+              <div class="fp-step"><span class="fp-reg" style="border-color:#06d6a0;color:#06d6a0">PC</span>+1 The Program Counter is incremented to point to the address of the next instruction</div>
+            </div>
+          </div>
+          <div class="fde-phase" style="--fp:#c084fc">
+            <div class="fde-phase-hd">
+              <div class="fp-num" style="background:#c084fc20;border-color:#c084fc;color:#c084fc">2</div>
+              <div>
+                <div class="fp-name" style="color:#c084fc">DECODE</div>
+                <div class="fp-sub">Interpret what the instruction means</div>
+              </div>
+            </div>
+            <div class="fp-steps">
+              <div class="fp-step">The <strong>Control Unit</strong> reads the binary instruction currently held in the Instruction Register (IR)</div>
+              <div class="fp-step">The CU identifies the <strong>operation code (opcode)</strong> — what type of operation is required (e.g. ADD, LOAD, STORE, JUMP)</div>
+              <div class="fp-step">The CU identifies the <strong>operands</strong> — what data is needed and where it is located (in a register or memory)</div>
+              <div class="fp-step">The CU sends appropriate <strong>control signals</strong> via the control bus to prepare the necessary components for execution</div>
+            </div>
+          </div>
+          <div class="fde-phase" style="--fp:#06d6a0">
+            <div class="fde-phase-hd">
+              <div class="fp-num" style="background:#06d6a020;border-color:#06d6a0;color:#06d6a0">3</div>
+              <div>
+                <div class="fp-name" style="color:#06d6a0">EXECUTE</div>
+                <div class="fp-sub">Carry out the instruction</div>
+              </div>
+            </div>
+            <div class="fp-steps">
+              <div class="fp-step">If arithmetic/logical: the <strong>ALU</strong> performs the operation on the operands; result is stored in the <strong>Accumulator (AC)</strong></div>
+              <div class="fp-step">If memory read: data is fetched from RAM via MAR/MDR into a register</div>
+              <div class="fp-step">If memory write: data from a register is written back to RAM via MAR/MDR</div>
+              <div class="fp-step">If jump/branch: the PC is updated to a new address, changing the sequence of execution</div>
+              <div class="fp-step">The cycle then <strong>repeats</strong> — the CPU immediately begins fetching the next instruction</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exam-note">
+          <div class="en-label">✏️ Exam Short Note — If asked "Describe the stages of the Fetch–Decode–Execute cycle"</div>
+          <div class="en-text"><strong>Fetch:</strong> The address in the PC is copied to the MAR; the instruction at that address in RAM is sent along the data bus to the MDR; it is then transferred to the IR; the PC is incremented. <strong>Decode:</strong> The Control Unit reads the instruction in the IR, identifies the operation and operands, and sends control signals to relevant components. <strong>Execute:</strong> The operation is carried out — the ALU performs calculations with the result stored in the AC, or data is read from/written to memory. The cycle then repeats for the next instruction.</div>
+        </div>
+      </div>
+
+      <!-- ════ GPU ════ -->
+      <div class="subtopic" id="sub-gpu">
+        <div class="def-card" style="--dc:#ef476f">
+          <div class="def-label">📖 IB Definition — Graphics Processing Unit (GPU)</div>
+          <div class="def-text">A <strong>Graphics Processing Unit (GPU)</strong> is a specialised co-processor originally designed to accelerate the rendering of graphics. Unlike the CPU which has a few powerful cores optimised for sequential tasks, the GPU contains thousands of smaller, simpler cores designed to perform the <em>same operation on many data points simultaneously</em> — a paradigm known as SIMD (Single Instruction, Multiple Data). This parallel architecture makes GPUs exceptionally efficient for tasks involving large-scale mathematical operations such as matrix multiplication.</div>
+        </div>
+        <div class="notes-grid">
+          <div class="note-block" style="--nb:#ef476f">
+            <div class="nb-title">GPU Architecture</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#ef476f20;color:#ef476f">Cores</span>Thousands of smaller, simpler cores (CUDA cores in NVIDIA, Stream Processors in AMD) vs CPU's few powerful cores</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#ef476f20;color:#ef476f">SIMD</span>Single Instruction, Multiple Data — executes one instruction across thousands of data points simultaneously</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#ef476f20;color:#ef476f">VRAM</span>Has its own high-bandwidth video memory (VRAM) — much faster access than system RAM for graphical data</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#ef476f20;color:#ef476f">Clock</span>GPU cores run at lower individual clock speeds than CPU cores but compensate through massive parallelism</div>
+          </div>
+          <div class="note-block" style="--nb:#f4a261">
+            <div class="nb-title">Real-World Applications</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">Gaming</span>Renders millions of pixels per frame in 3D games, applying lighting, shading and textures in real time</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">AI/ML</span>Trains deep learning neural networks — matrix multiplications in CNNs perfectly suited to parallel architecture</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">Science</span>Weather modelling, molecular dynamics, physics simulations — all require massive parallel computation</div>
+            <div class="nb-item"><span class="nb-tag" style="background:#f4a26120;color:#f4a261">Video</span>Real-time video encoding/decoding (H.265, AV1) — used in streaming platforms and video editing</div>
+          </div>
+        </div>
+        <div class="compare-table">
+          <div class="ct-hd">CPU vs GPU — Side-by-Side Comparison</div>
+          <table class="ct-table">
+            <tr><th>Feature</th><th style="color:#00c8aa">CPU</th><th style="color:#ef476f">GPU</th></tr>
+            <tr><td>Number of cores</td><td>4–32 powerful cores</td><td>Thousands of simple cores</td></tr>
+            <tr><td>Clock speed per core</td><td>3–6 GHz</td><td>1–2 GHz per core</td></tr>
+            <tr><td>Optimised for</td><td>Sequential, complex tasks</td><td>Parallel, repetitive tasks</td></tr>
+            <tr><td>Memory</td><td>System RAM (DDR5)</td><td>VRAM (GDDR6/HBM)</td></tr>
+            <tr><td>Best use case</td><td>OS, apps, logic, branching</td><td>Graphics, AI, simulation</td></tr>
+            <tr><td>IB relevance</td><td>A1.1.1 CPU components</td><td>A1.1.2 + A4 Machine Learning</td></tr>
+          </table>
+        </div>
+        <div class="exam-note">
+          <div class="en-label">✏️ Exam Short Note — If asked "Outline why a GPU is suitable for training a neural network"</div>
+          <div class="en-text">Training a neural network involves performing large numbers of matrix multiplications across massive datasets simultaneously. A GPU contains thousands of smaller processing cores that can execute the same mathematical operation on many data points in parallel (SIMD architecture). This parallel processing capability means a GPU can perform these matrix operations far more efficiently than a CPU, significantly reducing the time required to train a deep learning model.</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -713,12 +985,285 @@ html,body{height:100%;overflow:hidden;font-family:'Space Grotesk',sans-serif;bac
 
   </div>
 
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PANEL: CASE STUDIES                   -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel" id="panel-casestudies">
+    <div class="panel-hd">
+      <div class="panel-title">Case Study Questions</div>
+      <div class="panel-sub">IB-style contextualised questions with mark-scheme answers — practise exam technique</div>
+    </div>
+    <div class="panel-body">
+
+      <!-- CASE STUDY 1: PaaS / Cloud Dev Team -->
+      <div class="cs-block">
+        <div class="cs-context-bar">
+          <div class="cs-ctx-label">📋 CASE STUDY 1</div>
+          <div class="cs-ctx-title">Software Development via Cloud Platform (PaaS)</div>
+        </div>
+        <div class="cs-context">
+          A team of software developers at a tech startup uses a <strong>Platform as a Service (PaaS)</strong> environment accessed via their laptops to collaboratively build a web application. The PaaS provider runs all computation on remote servers, and the developers interact with it through a browser. Each developer's laptop has a dual-core CPU running at 2.4 GHz with 8 GB of RAM.
+        </div>
+
+        <div class="cs-q-list">
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q1a</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Outline</span> the function of the accumulator in the CPU of each developer's laptop. <span class="cs-marks">[2]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>The accumulator stores intermediate arithmetic and logic results / holds operand data; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>…reducing the number of accesses to slower RAM during a sequence of calculations; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 <strong>Examiner note:</strong> "Stores data" alone = 0 marks. Must specify arithmetic/logic results AND give the reason (reducing memory accesses).</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q1b</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Explain</span> how the Program Counter (PC) and Memory Address Register (MAR) interact during the Fetch phase. <span class="cs-marks">[4]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>The PC holds the memory address of the next instruction to be fetched; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>This address is copied from the PC to the MAR; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The MAR sends the address along the address bus to RAM, requesting the instruction; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The PC is then incremented by 1 so it points to the address of the next instruction for the subsequent cycle; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 <strong>Most missed mark:</strong> The PC increment. Always include "PC is incremented (+1)" as a separate point.</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q1c</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">State</span> one difference between the address bus and the data bus in the laptop's CPU. <span class="cs-marks">[2]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>The address bus is unidirectional (carries addresses only from CPU to memory); <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>whereas the data bus is bidirectional (carries data in both directions between CPU and memory/I/O); <em>[1]</em></div>
+                <div class="cs-alt">Alternative: Address bus carries memory addresses; data bus carries actual data/instructions;</div>
+              </div>
+              <div class="cs-tip">💡 Use contrast words like "whereas" or "however" when stating differences — it signals to the examiner that you understand both sides.</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q1d</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Outline</span> one benefit of using a dual-core processor compared to a single-core processor for the developers' laptops. <span class="cs-marks">[2]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>A dual-core processor has two independent processing cores; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>allowing two threads/tasks to be executed simultaneously (true parallelism), improving overall system performance; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 Always give two linked ideas: WHAT the multi-core has (multiple cores) + WHY it helps (simultaneous execution / parallelism).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 2: Hospital AI/CNN -->
+      <div class="cs-block">
+        <div class="cs-context-bar" style="--csb:#ef476f">
+          <div class="cs-ctx-label">📋 CASE STUDY 2</div>
+          <div class="cs-ctx-title">Hospital AI System — Deep Learning CNN for Medical Imaging</div>
+        </div>
+        <div class="cs-context">
+          A large hospital has implemented a <strong>convolutional neural network (CNN)</strong> to automatically analyse chest X-ray images and predict the likelihood of pneumonia. The system was trained on a dataset of 200,000 labelled X-ray images. The hospital's IT team had to choose between training the model on standard CPU servers or purchasing dedicated <strong>GPU clusters</strong>. They ultimately chose GPU clusters, reducing training time from an estimated 3 weeks to 18 hours.
+        </div>
+
+        <div class="cs-q-list">
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q2a</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Outline</span> one reason why a GPU is recommended when training the CNN model using the large dataset. <span class="cs-marks">[2]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>Deep learning involves many matrix operations (multiplications and convolutions); <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>GPUs have many smaller cores designed explicitly for parallel operations, significantly speeding up training time; <em>[1]</em></div>
+                <div class="cs-alt">Alternative: Large datasets increase computational demand; training on CPU alone would be too time-consuming / GPUs speed up training significantly;</div>
+              </div>
+              <div class="cs-tip">💡 <strong>The GPU formula:</strong> What AI needs (parallel matrix ops) + What GPU provides (thousands of parallel cores). "Parallel" is the essential keyword.</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q2b</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Explain</span> the architectural difference between a CPU and a GPU that makes the GPU more suitable for training the CNN. <span class="cs-marks">[4]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>A CPU has a small number of powerful, complex cores (typically 4–32) optimised for sequential processing; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>A GPU has thousands of smaller, simpler cores designed to perform the same operation on many data points simultaneously; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>CNN training requires repeating the same mathematical operations (matrix multiplications) across millions of data points; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The GPU's parallel architecture (SIMD) allows it to perform these operations in parallel, dramatically reducing training time; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 Link CPU limitation → GPU strength → why CNN benefits. The context (CNN/hospital) is there to frame your answer — always refer back to the scenario.</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q2c</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Describe</span> the role of the Control Unit during the execution of one instruction in the CPU. <span class="cs-marks">[3]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>The Control Unit reads the instruction currently held in the Instruction Register (IR); <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>It decodes the instruction — identifying the operation (opcode) and the operands required; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>It sends control signals via the control bus to the appropriate components (e.g. ALU, registers, memory) to execute the instruction; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 Three-mark answers need three clear, distinct statements. Use the structure: reads → decodes → sends signals.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 3: Autonomous Vehicle -->
+      <div class="cs-block">
+        <div class="cs-context-bar" style="--csb:#f4a261">
+          <div class="cs-ctx-label">📋 CASE STUDY 3</div>
+          <div class="cs-ctx-title">Autonomous Vehicle — Real-Time Processing</div>
+        </div>
+        <div class="cs-context">
+          A technology company is developing a <strong>self-driving car</strong>. The vehicle must process real-time data from cameras, LiDAR sensors and radar simultaneously, run computer vision algorithms to detect obstacles, and make driving decisions in milliseconds. The onboard computing system includes a <strong>64-core CPU</strong>, a dedicated <strong>GPU</strong>, and a custom <strong>NPU (Neural Processing Unit)</strong> for running the AI inference model.
+        </div>
+
+        <div class="cs-q-list">
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q3a</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Outline</span> why a multi-core CPU is more appropriate for this self-driving car system than a single-core CPU. <span class="cs-marks">[2]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>The vehicle must process multiple simultaneous tasks (camera feeds, LiDAR, radar, decision-making); <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>A multi-core CPU can assign each task to a separate core, processing them in parallel — a single-core processor would need to switch between tasks sequentially, introducing dangerous delays; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 Great answers reference the scenario — "dangerous delays" shows real understanding. Always connect the technical concept to the real-world consequence in context.</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q3b</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Explain</span> the role of a co-processor in the vehicle's computing system. Use the GPU or NPU as an example. <span class="cs-marks">[4]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>A co-processor is a specialist processor that handles specific computational tasks alongside the main CPU; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The GPU processes camera image data in real time — its thousands of parallel cores rapidly apply computer vision algorithms to detect lane markings and obstacles; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The NPU runs the AI inference model (e.g. object classification) — specialist hardware accelerates this faster than the CPU alone; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>By offloading these tasks to co-processors, the main CPU is freed to handle decision-making, system coordination and other logic, improving overall system performance; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 When "explain with example" — define the concept, give the specific example from the scenario (GPU/NPU), AND explain the impact. Four-mark answers need all three.</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q3c</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Describe</span> the role of the three system buses in transferring sensor data into the vehicle's CPU for processing. <span class="cs-marks">[3]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>The address bus (unidirectional) carries the memory address of where the sensor data is stored — from the CPU to memory, specifying which location to access; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The data bus (bidirectional) transfers the actual sensor data between memory/I/O devices and the CPU's MDR; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The control bus carries signals from the Control Unit (such as read/write) that coordinate and synchronise the transfer of data; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 For bus questions: name it, state direction (uni/bi), state what it carries, and link to the scenario. One mark per bus.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 4: Game Studio -->
+      <div class="cs-block">
+        <div class="cs-context-bar" style="--csb:#06d6a0">
+          <div class="cs-ctx-label">📋 CASE STUDY 4</div>
+          <div class="cs-ctx-title">Video Game Studio — High-Performance Rendering</div>
+        </div>
+        <div class="cs-context">
+          A video game development studio is producing a realistic open-world game. During development, their workstations need to: compile large codebases, run physics simulations, and render photorealistic 3D scenes using ray tracing at 4K resolution. The studio upgrades their workstations from <strong>quad-core CPUs</strong> to systems with <strong>16-core CPUs and dedicated GPUs</strong> with 16 GB of VRAM.
+        </div>
+
+        <div class="cs-q-list">
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q4a</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Outline</span> one reason why upgrading from a quad-core to a 16-core CPU would benefit the studio's developers. <span class="cs-marks">[2]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>A 16-core CPU has four times as many independent processing units; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>allowing more tasks (such as code compilation, physics simulation and asset processing) to be performed simultaneously, reducing overall development time; <em>[1]</em></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q4b</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Explain</span> why a GPU with dedicated VRAM is necessary for 4K ray tracing in this studio's workflow. <span class="cs-marks">[4]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>Ray tracing at 4K requires calculating the colour of millions of pixels per frame, each requiring multiple light-ray calculations; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The GPU's thousands of parallel cores can compute many pixel values simultaneously, which is not possible with a CPU's few sequential cores; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>VRAM (video RAM) stores the large frame buffer, textures and geometry data needed for rendering — 4K resolution generates very large data that must be accessed rapidly; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>VRAM has much higher memory bandwidth than system RAM, allowing the GPU to rapidly read/write rendering data without bottlenecks; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 4-mark "explain" answers need depth. Connect each point to the specific scenario — mention "4K", "ray tracing", "VRAM" from the context.</div>
+            </div>
+          </div>
+
+          <div class="cs-q">
+            <div class="cs-q-hd">
+              <div class="cs-q-num">Q4c</div>
+              <div class="cs-q-text"><span class="ib-kw-cs">Describe</span> what happens in the Instruction Register (IR) and Accumulator (AC) when the CPU executes the instruction: <code style="background:#1a2040;padding:2px 7px;border-radius:4px;font-size:12px;">ADD 5, 3</code>. <span class="cs-marks">[3]</span></div>
+            </div>
+            <div class="cs-ans-toggle" onclick="toggleAns(this)">▶ Show Mark-Scheme Answer</div>
+            <div class="cs-ans">
+              <div class="cs-ans-pts">
+                <div class="cs-pt"><span class="cs-tick">✓</span>The instruction "ADD 5, 3" is fetched from memory and held in the IR, where the Control Unit decodes it to identify that an addition operation is required with operands 5 and 3; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The CU directs the ALU to perform the addition: 5 + 3 = 8; <em>[1]</em></div>
+                <div class="cs-pt"><span class="cs-tick">✓</span>The result (8) is stored in the Accumulator (AC), which holds this intermediate result and reduces the need to write it back to RAM immediately; <em>[1]</em></div>
+              </div>
+              <div class="cs-tip">💡 Trace-style questions: always go step by step through IR → CU decode → ALU computes → AC stores result. Don't jump straight to "the answer is 8".</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   </main>
 </div>
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────────────
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzaOkjOdlEZLBOw82UDq9WCfg032Zd9QGIH-W4fBqqWIwveEdj1KAru78a70JlOiaCBiw/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzaOkjOdlEZLBOw82UDq9WCfg032Zd9QGIH-W4fBqqWIwveEdj1KAru78a70JlOiaCBiw/exec';;
 
 // ── PANEL NAVIGATION ───────────────────────────────────────────────────────
 function goPanel(id, btn) {
@@ -1114,6 +1659,25 @@ function showResults() {
     document.getElementById('savedPill').style.background = '#1a0a00';
     document.getElementById('savedPill').style.color = '#f4a261';
   }
+}
+
+// ── SUBTOPIC TABS ──────────────────────────────────────────────────────────
+function showSub(id, btn) {
+  document.querySelectorAll('.subtopic').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
+  var el = document.getElementById('sub-' + id);
+  if (el) el.classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ── CASE STUDY TOGGLE ──────────────────────────────────────────────────────
+function toggleAns(btn) {
+  var ans = btn.nextElementSibling;
+  if (!ans) return;
+  var open = ans.style.display === 'block';
+  ans.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? '▶ Show Mark-Scheme Answer' : '▼ Hide Answer';
+  btn.style.color = open ? '' : '#00c8aa';
 }
 
 function retryQuiz() {
