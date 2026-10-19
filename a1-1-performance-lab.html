@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Interactive performance simulators for IBDP CS A1.1 — cache hierarchy, CPU pipelining and bus width.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Performance Lab</title>
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#070A11; --panel:#0F1521; --panel2:#151D2D; --line:#22304A;
+  --fg:#EAF0F8; --muted:#8E9EBA; --dim:#5A6882;
+  --teal:#2DD4BF; --blue:#60A5FA; --red:#F87171; --amber:#FBBF24;
+  --violet:#A78BFA; --green:#4ADE80; --pink:#F472B6;
+  --mono:'SF Mono',ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.app{display:flex;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:600px;overflow:hidden}
+
+.side{flex:0 0 236px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 13px;gap:3px;overflow:auto}
+.brandrow{display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--pink));display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:700;color:#1A0C04;flex:none}
+.brandrow h1{font-size:13.5px;margin:0;font-weight:700;letter-spacing:-.2px;line-height:1.2}
+.code{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:1px;margin:3px 0 16px 41px}
+.navbtn{display:flex;align-items:flex-start;gap:10px;padding:11px 11px;border-radius:9px;border:1px solid transparent;background:none;
+  color:var(--muted);font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;width:100%;transition:.14s;line-height:1.35}
+.navbtn:hover{background:var(--panel2);color:var(--fg)}
+.navbtn.on{background:var(--panel2);border-color:var(--line);color:var(--fg)}
+.navbtn .d{width:8px;height:8px;border-radius:50%;flex:none;margin-top:4px}
+.navbtn small{display:block;font-size:10px;color:var(--dim);font-weight:500;margin-top:2px}
+.sidefoot{margin-top:auto;padding-top:16px;font-size:10px;color:var(--dim);line-height:1.6}
+.back{display:block;margin-top:12px;font-size:11px;color:var(--teal);text-decoration:none;font-weight:600}
+
+.stage{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+.head{flex:none;padding:20px 28px 15px;border-bottom:1px solid var(--line)}
+.hrow{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.head h2{margin:0;font-size:21px;font-weight:800;letter-spacing:-.5px}
+.badge{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:5px;border:1px solid var(--line);color:var(--muted)}
+.badge.hl{color:var(--amber);border-color:rgba(251,191,36,.45)}
+.head p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.55;max-width:80ch}
+.body{flex:1;min-height:0;overflow:auto;padding:22px 28px 40px}
+.panel{display:none} .panel.on{display:block}
+.wrap{max-width:1300px}
+
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:22px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted)}
+.card .sub{margin:0 0 15px;font-size:11.5px;color:var(--dim);line-height:1.55}
+
+label.fld{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:10.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin:14px 0 7px}
+label.fld:first-of-type{margin-top:0}
+label.fld b{font-family:var(--mono);font-size:12.5px;color:var(--teal);text-transform:none;letter-spacing:0}
+input[type=range]{width:100%;accent-color:var(--teal);margin:0}
+.toggle{display:flex;gap:7px;margin-top:4px}
+.tg{flex:1;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--muted);
+  font-size:11.5px;font-weight:700;cursor:pointer;font-family:var(--sans)}
+.tg.on{border-color:var(--teal);color:var(--teal);background:rgba(45,212,191,.12)}
+
+/* ---- memory hierarchy ---- */
+.hier{display:flex;flex-direction:column;gap:9px;position:relative}
+.lvl{display:flex;align-items:center;gap:14px;padding:15px 17px;border-radius:12px;border:2px solid var(--line);
+  background:var(--panel2);transition:.16s;position:relative;overflow:hidden}
+.lvl.flash{border-color:var(--green);background:rgba(74,222,128,.14)}
+.lvl.miss{border-color:var(--red)}
+.lvl .nm{font-size:14.5px;font-weight:700;width:88px;flex:none}
+.lvl .tm{font-family:var(--mono);font-size:11.5px;color:var(--dim);width:72px;flex:none}
+.lvl .barwrap{flex:1;min-width:0;height:10px;border-radius:6px;background:var(--bg);overflow:hidden}
+.lvl .barwrap i{display:block;height:100%;border-radius:6px;transition:width .25s}
+.lvl .pc{font-family:var(--mono);font-size:12px;font-weight:700;width:52px;text-align:right;flex:none;color:var(--fg)}
+.dot{position:absolute;left:14px;width:13px;height:13px;border-radius:50%;background:var(--amber);
+  box-shadow:0 0 14px rgba(251,191,36,.8);transition:top .2s linear;pointer-events:none;z-index:4}
+
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:11px;margin-top:16px}
+.st{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px 14px}
+.st .k{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim);display:block;margin-bottom:5px}
+.st .v{font-family:var(--mono);font-size:21px;font-weight:700;color:var(--teal);line-height:1}
+.st .v.a{color:var(--amber)} .st .v.r{color:var(--red)} .st .v.g{color:var(--green)}
+.st .u{font-size:10px;color:var(--dim);margin-top:3px;display:block}
+
+.work{font-family:var(--mono);font-size:12.5px;line-height:1.95;background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:13px 15px;margin-top:14px;overflow-x:auto;white-space:pre;color:var(--muted)}
+.work b{color:var(--teal);font-weight:600}
+.work .r{color:var(--amber)}
+
+/* ---- pipeline grid ---- */
+.pgrid{overflow-x:auto;padding-bottom:6px}
+.ptable{border-collapse:separate;border-spacing:5px;font-family:var(--mono)}
+.ptable th{font-size:10.5px;color:var(--dim);font-weight:700;padding:2px 0;text-align:center;min-width:42px}
+.ptable td.lb{font-size:11.5px;color:var(--muted);font-weight:700;text-align:right;padding-right:7px;white-space:nowrap}
+.cell{width:42px;height:34px;border-radius:7px;background:var(--panel2);border:1px solid var(--line);
+  display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--dim);transition:.2s}
+.cell.act{color:#06101F;border-color:transparent}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+.sw.key{width:19px;height:19px;border-radius:5px;background:var(--panel2);border:1px solid var(--line);
+  display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--fg);font-style:normal}
+.legend .lnote{color:var(--dim);font-style:italic}
+
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.cmpbox{border-radius:12px;padding:15px 16px;border:1px solid var(--line)}
+.cmpbox.slow{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.3)}
+.cmpbox.fast{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.3)}
+.cmpbox .k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.cmpbox.slow .k{color:var(--red)} .cmpbox.fast .k{color:var(--green)}
+.cmpbox .v{font-family:var(--mono);font-size:26px;font-weight:800;line-height:1}
+.cmpbox .u{font-size:11px;color:var(--dim);margin-top:4px}
+
+/* ---- bus ---- */
+.bits{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 2px}
+.bit{width:26px;height:32px;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);
+  font-size:12px;font-weight:700;border:1px solid var(--line);background:var(--bg);color:var(--dim);transition:.15s}
+.bit.on{background:var(--teal);color:#04171A;border-color:transparent}
+.memmap{display:grid;grid-template-columns:repeat(32,1fr);gap:2px;margin-top:12px}
+.mcell{aspect-ratio:1;border-radius:2px;background:var(--panel2);transition:.2s}
+.mcell.on{background:var(--teal)}
+
+.note{font-size:12px;color:var(--dim);line-height:1.65;margin-top:13px}
+.note b{color:var(--muted)}
+
+@media (max-width:980px){
+  .app{flex-direction:column;height:auto;min-height:0;overflow:visible}
+  .split > *,.card{min-width:0}
+  .side{flex:none;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px 16px;gap:6px;
+    border-right:none;border-bottom:1px solid var(--line);overflow:visible}
+  .brandrow{width:100%} .code,.sidefoot{display:none}
+  .navbtn{width:auto;flex:none;padding:7px 10px;font-size:11.5px} .navbtn small{display:none}
+  .stage{min-height:0} .body{overflow:visible;padding:18px 16px 32px}
+  .head{padding:16px}
+  .split,.cmp{grid-template-columns:minmax(0,1fr)}
+  .work{font-size:11px}
+  .memmap{grid-template-columns:repeat(16,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side">
+    <div class="brandrow"><div class="logo">⚡</div><h1>Performance Lab</h1></div>
+    <div class="code">A1.1</div>
+    <button class="navbtn on" data-p="cache"><span class="d" style="background:var(--teal)"></span>
+      <span>Cache &amp; memory<small>A1.1.4 · hit rate and access time</small></span></button>
+    <button class="navbtn" data-p="pipe"><span class="d" style="background:var(--violet)"></span>
+      <span>Pipelining<small>A1.1.6 · cycles saved · HL</small></span></button>
+    <button class="navbtn" data-p="bus"><span class="d" style="background:var(--blue)"></span>
+      <span>Bus width<small>A1.1.1 · addressable memory</small></span></button>
+    <p class="sidefoot">Change a control and watch what happens. Every number updates live from the formula shown underneath.
+      <a class="back" href="index.html">&larr; Back to all topics</a></p>
+  </nav>
+
+  <section class="stage">
+    <div class="head">
+      <div class="hrow"><h2 id="ht">Cache and the memory hierarchy</h2><span class="badge" id="hb">A1.1.4</span></div>
+      <p id="hp">Watch where each request is found. Make the cache bigger or the program more predictable and see the hit rate — and the average access time — change in front of you.</p>
+    </div>
+
+    <div class="body"><div class="wrap">
+
+    <!-- ============ CACHE ============ -->
+    <div class="panel on" id="p-cache">
+      <div class="split">
+        <div>
+          <div class="card">
+            <h3>Where the CPU found the data</h3>
+            <p class="sub">Each dot is one memory request. It drops down the hierarchy until a level holds what it needs. A hit flashes green; a miss pushes it further down to slower storage.</p>
+            <div class="hier" id="hier">
+              <div class="lvl" data-i="0"><span class="nm">L1 cache</span><span class="tm">1 ns</span>
+                <span class="barwrap"><i style="background:var(--green)"></i></span><span class="pc">0%</span></div>
+              <div class="lvl" data-i="1"><span class="nm">L2 cache</span><span class="tm">4 ns</span>
+                <span class="barwrap"><i style="background:var(--teal)"></i></span><span class="pc">0%</span></div>
+              <div class="lvl" data-i="2"><span class="nm">L3 cache</span><span class="tm">12 ns</span>
+                <span class="barwrap"><i style="background:var(--blue)"></i></span><span class="pc">0%</span></div>
+              <div class="lvl" data-i="3"><span class="nm">RAM</span><span class="tm">80 ns</span>
+                <span class="barwrap"><i style="background:var(--amber)"></i></span><span class="pc">0%</span></div>
+              <div class="lvl" data-i="4"><span class="nm">SSD <small style="display:block;font-size:9.5px;color:var(--dim);font-weight:500">page fault</small></span><span class="tm">100 000 ns</span>
+                <span class="barwrap"><i style="background:var(--red)"></i></span><span class="pc">0%</span></div>
+              <div class="dot" id="dot" style="top:-30px"></div>
+            </div>
+            <div class="statgrid">
+              <div class="st"><span class="k">Cache hit rate</span><span class="v g" id="c-hit">0%</span><span class="u">found in L1, L2 or L3</span></div>
+              <div class="st"><span class="k">Cache misses</span><span class="v r" id="c-miss">0%</span><span class="u">had to go to RAM or disk</span></div>
+              <div class="st"><span class="k">Average access</span><span class="v a" id="c-amat">0</span><span class="u">nanoseconds</span></div>
+              <div class="st"><span class="k">Speed-up</span><span class="v" id="c-spd">1×</span><span class="u">versus no cache at all</span></div>
+              <div class="st"><span class="k">Requests</span><span class="v" id="c-n">0</span><span class="u">simulated so far</span></div>
+            </div>
+            <div class="work" id="c-work"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Controls</h3>
+          <p class="sub">The two things that actually decide a hit rate.</p>
+          <label class="fld">Cache size <b id="l-size">Medium</b></label>
+          <input type="range" id="c-size" min="0" max="100" value="55">
+          <p class="note" style="margin-top:6px">A bigger cache holds more of the working set, so more requests are found before RAM.</p>
+
+          <label class="fld">Program locality <b id="l-loc">Typical</b></label>
+          <input type="range" id="c-loc" min="0" max="100" value="60">
+          <p class="note" style="margin-top:6px">How often the program reuses data it has just touched. A loop over a small array has high locality; jumping randomly through a huge data set has almost none.</p>
+
+          <label class="fld">Prefetching</label>
+          <div class="toggle">
+            <button class="tg on" data-pf="1">On</button>
+            <button class="tg" data-pf="0">Off</button>
+          </div>
+          <p class="note" style="margin-top:6px">Prefetching predicts what will be needed next and loads it into cache ahead of time, lifting the hit rate.</p>
+
+          <label class="fld">Simulation speed</label>
+          <div class="toggle">
+            <button class="tg" data-sp="420">Slow</button>
+            <button class="tg on" data-sp="170">Normal</button>
+            <button class="tg" data-sp="45">Fast</button>
+          </div>
+          <div class="toggle" style="margin-top:10px">
+            <button class="tg on" id="c-run">Pause</button>
+            <button class="tg" id="c-reset">Reset counts</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PIPELINE ============ -->
+    <div class="panel" id="p-pipe">
+      <div class="split">
+        <div class="card">
+          <h3>The pipeline filling up</h3>
+          <p class="sub">Each row is one instruction; each column is one clock cycle. Watch the diagonal form — that is the pipeline filling. Once it is full, one instruction completes every cycle.</p>
+          <div class="pgrid"><table class="ptable" id="ptab"></table></div>
+          <div class="legend" id="plegend"></div>
+          <div class="cmp">
+            <div class="cmpbox slow"><div class="k">Without pipelining</div><div class="v" id="p-non">20</div><div class="u">clock cycles &mdash; k × n</div></div>
+            <div class="cmpbox fast"><div class="k">With pipelining</div><div class="v" id="p-pip">8</div><div class="u">clock cycles &mdash; k + (n − 1)</div></div>
+          </div>
+          <div class="work" id="p-work"></div>
+        </div>
+
+        <div class="card">
+          <h3>Controls</h3>
+          <p class="sub">Change either value and the grid, the formulas and the speed-up all follow.</p>
+          <label class="fld">Pipeline stages (k) <b id="l-k">5</b></label>
+          <input type="range" id="p-k" min="2" max="5" value="5">
+          <p class="note" style="margin-top:6px">The textbook splits the cycle into five: fetch, decode, execute, memory access, write back. Drag down to 2 to see how a shallower pipeline saves fewer cycles.</p>
+
+          <label class="fld">Instructions (n) <b id="l-n">4</b></label>
+          <input type="range" id="p-n" min="1" max="12" value="4">
+          <p class="note" style="margin-top:6px">Try n = 1 — with a single instruction, pipelining saves nothing at all. The benefit only appears when instructions queue up behind each other.</p>
+
+          <div class="statgrid" style="grid-template-columns:1fr 1fr">
+            <div class="st"><span class="k">Cycles saved</span><span class="v g" id="p-saved">12</span></div>
+            <div class="st"><span class="k">Speed-up</span><span class="v a" id="p-spd">2.5×</span></div>
+          </div>
+          <div class="toggle" style="margin-top:12px">
+            <button class="tg on" id="p-play">Replay animation</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BUS ============ -->
+    <div class="panel" id="p-bus">
+      <div class="split">
+        <div class="card">
+          <h3>Address bus width and what it can reach</h3>
+          <p class="sub">Every bit you add to the address bus doubles the number of memory locations the CPU can address. The grid below shows the addressable space filling up.</p>
+          <div class="bits" id="b-bits"></div>
+          <div class="memmap" id="b-map"></div>
+          <div class="statgrid">
+            <div class="st"><span class="k">Addressable locations</span><span class="v" id="b-loc">65,536</span><span class="u">2<sup>n</sup> where n = bus width</span></div>
+            <div class="st"><span class="k">If each holds 1 byte</span><span class="v a" id="b-cap">64 KiB</span><span class="u">maximum addressable memory</span></div>
+            <div class="st"><span class="k">Data bus width</span><span class="v b" id="b-dw">32 bits</span><span class="u">moved per transfer</span></div>
+            <div class="st"><span class="k">Transfer rate</span><span class="v g" id="b-rate">400 MB/s</span><span class="u">at 100 MHz</span></div>
+          </div>
+          <div class="work" id="b-work"></div>
+        </div>
+
+        <div class="card">
+          <h3>Controls</h3>
+          <p class="sub">Two independent buses, two independent effects.</p>
+          <label class="fld">Address bus width <b id="l-aw">16 bits</b></label>
+          <input type="range" id="b-aw" min="4" max="32" value="16">
+          <p class="note" style="margin-top:6px">This sets the <b>memory capacity</b> of the system. It has nothing to do with how fast data moves.</p>
+
+          <label class="fld">Data bus width <b id="l-dw">32 bits</b></label>
+          <input type="range" id="b-dwr" min="0" max="3" value="2">
+          <p class="note" style="margin-top:6px">This sets how much data moves <b>at one time</b>. Common widths are 8, 16, 32 and 64 bits.</p>
+
+          <label class="fld">Clock speed <b id="l-clk">100 MHz</b></label>
+          <input type="range" id="b-clk" min="1" max="40" value="10">
+          <p class="note" style="margin-top:14px"><b>The exam distinction:</b> address bus width → how much memory you can reach. Data bus width → how fast you can move it. Students mix these up constantly.</p>
+        </div>
+      </div>
+    </div>
+
+    </div></div>
+  </section>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const fmt = n => n.toLocaleString('en-US');
+
+const HEADS = {
+  cache:['Cache and the memory hierarchy','A1.1.4','Watch where each request is found. Make the cache bigger or the program more predictable and see the hit rate — and the average access time — change in front of you.'],
+  pipe :['Pipelining in a multi-core architecture','A1.1.6 · HL','Each row is an instruction, each column a clock cycle. Change the number of stages or instructions and watch the cycles saved change with it.'],
+  bus  :['Bus width and what it controls','A1.1.1','The address bus decides how much memory the CPU can reach. The data bus decides how fast it moves. Two separate things that students constantly confuse.']
+};
+$$('.navbtn').forEach(b => b.addEventListener('click', () => {
+  const p = b.dataset.p;
+  $$('.navbtn').forEach(x => x.classList.toggle('on', x===b));
+  $$('.panel').forEach(el => el.classList.toggle('on', el.id==='p-'+p));
+  $('#ht').textContent = HEADS[p][0];
+  $('#hb').textContent = HEADS[p][1];
+  $('#hb').className = 'badge' + (HEADS[p][1].includes('HL') ? ' hl' : '');
+  $('#hp').textContent = HEADS[p][2];
+  $('.body').scrollTop = 0;
+  if (p==='pipe') playPipe();
+}));
+
+/* ================= CACHE ================= */
+const T = [1, 4, 12, 80, 100000];           // ns per level
+const NAMES = ['L1','L2','L3','RAM','SSD'];
+let counts = [0,0,0,0,0], total = 0, totalNs = 0;
+let pf = 1, speed = 170, running = true, cTimer = null;
+
+function probs(){
+  const size = +$('#c-size').value / 100;
+  const loc  = +$('#c-loc').value / 100;
+  const boost = pf ? 0.08 : 0;
+  // L1 hit chance rises with locality most, size some
+  const h1 = Math.min(0.93, (0.12 + 0.62*loc + 0.22*size + boost) * 0.95);
+  const h2 = Math.min(0.80, 0.18 + 0.45*size + 0.18*loc + boost);
+  const h3 = Math.min(0.85, 0.22 + 0.55*size + boost);
+  const hR = 0.997;        // a page fault to the SSD is rare — see note in the working
+  return [h1, h2, h3, hR];
+}
+/* Average memory access time, exactly the formula printed under the stats:
+   three cache levels and then RAM. Page faults out to the SSD are left out —
+   they are hundreds of times rarer and thousands of times slower, so including
+   them would hide the thing this panel is about. */
+function amat(){
+  const [h1,h2,h3] = probs();
+  return h1*T[0]
+       + (1-h1)*( h2*T[1]
+       + (1-h2)*( h3*T[2]
+       + (1-h3)*T[3] ));
+}
+function labels(){
+  const s = +$('#c-size').value, l = +$('#c-loc').value;
+  $('#l-size').textContent = s<25?'Tiny':s<50?'Small':s<72?'Medium':s<90?'Large':'Huge';
+  $('#l-loc').textContent  = l<22?'Almost none':l<45?'Low':l<70?'Typical':l<88?'High':'Very high';
+}
+function pickLevel(){
+  const p = probs();
+  for (let i=0;i<4;i++) if (Math.random() < p[i]) return i;
+  return 4;
+}
+function step(){
+  if (!running) return;
+  const lv = pickLevel();
+  counts[lv]++; total++; totalNs += T[lv];
+  const dot = $('#dot');
+  const rows = $$('#hier .lvl');
+  dot.style.transition='none'; dot.style.top='-26px';
+  requestAnimationFrame(()=>{
+    dot.style.transition = 'top '+Math.max(90, speed*0.55)+'ms linear';
+    dot.style.top = (rows[lv].offsetTop + 16) + 'px';
+  });
+  setTimeout(()=>{
+    rows[lv].classList.add(lv<3?'flash':'miss');
+    setTimeout(()=>rows[lv].classList.remove('flash','miss'), Math.max(120, speed*0.6));
+    paintCache();
+  }, Math.max(100, speed*0.56));
+}
+function paintCache(){
+  const rows = $$('#hier .lvl');
+  rows.forEach((r,i)=>{
+    const p = total ? counts[i]/total*100 : 0;
+    r.querySelector('i').style.width = p.toFixed(1)+'%';
+    r.querySelector('.pc').textContent = p.toFixed(1)+'%';
+  });
+  const hits = counts[0]+counts[1]+counts[2];
+  const hr = total ? hits/total*100 : 0;
+  $('#c-hit').textContent = hr.toFixed(1)+'%';
+  $('#c-miss').textContent = (100-hr).toFixed(1)+'%';
+  $('#c-n').textContent = fmt(total);
+  const a = amat();
+  $('#c-amat').textContent = a.toFixed(1);
+  $('#c-spd').textContent = (T[3]/a).toFixed(1)+'×';
+  const [h1,h2,h3] = probs();
+  const theory = (1 - (1-h1)*(1-h2)*(1-h3)) * 100;
+  $('#c-work').innerHTML =
+`AMAT = h₁·t₁ + (1−h₁)[ h₂·t₂ + (1−h₂)[ h₃·t₃ + (1−h₃)·t_RAM ] ]
+
+h₁ = <b>${(h1*100).toFixed(0)}%</b>   h₂ = <b>${(h2*100).toFixed(0)}%</b>   h₃ = <b>${(h3*100).toFixed(0)}%</b>
+t₁ = 1 ns   t₂ = 4 ns   t₃ = 12 ns   t_RAM = 80 ns
+
+combined cache hit rate = 1 − (1−h₁)(1−h₂)(1−h₃) = <span class="r">${theory.toFixed(1)}%</span>
+average access time     = <span class="r">${a.toFixed(2)} ns</span>
+straight from RAM every time = <span class="r">80 ns</span>  →  speed-up <span class="r">${(T[3]/a).toFixed(1)}×</span>
+
+The measured percentages on the left converge on these figures as more
+requests are simulated. Page faults out to the SSD are shown in the
+animation but left out of the formula: they are far rarer and thousands
+of times slower, which would hide the effect this panel is about.`;
+}
+function restart(){ clearInterval(cTimer); cTimer = setInterval(step, speed); }
+/* Changing a control restarts the counts, so the measured percentages on the
+   left always describe the settings currently on screen rather than a mixture
+   of the old ones and the new. */
+function recount(){ counts=[0,0,0,0,0]; total=0; totalNs=0; }
+['c-size','c-loc'].forEach(id => $('#'+id).addEventListener('input', ()=>{ labels(); recount(); paintCache(); }));
+$$('[data-pf]').forEach(b=>b.addEventListener('click',()=>{ $$('[data-pf]').forEach(x=>x.classList.toggle('on',x===b)); pf=+b.dataset.pf; recount(); paintCache(); }));
+$$('[data-sp]').forEach(b=>b.addEventListener('click',()=>{ $$('[data-sp]').forEach(x=>x.classList.toggle('on',x===b)); speed=+b.dataset.sp; restart(); }));
+$('#c-run').addEventListener('click', ()=>{ running=!running; $('#c-run').textContent = running?'Pause':'Resume'; $('#c-run').classList.toggle('on',running); });
+$('#c-reset').addEventListener('click', ()=>{ recount(); paintCache(); });
+labels(); paintCache(); restart();
+
+/* ================= PIPELINE ================= */
+const STAGES = ['Fetch','Decode','Execute','Memory','Write'];
+const PCOL = ['var(--red)','var(--amber)','var(--teal)','var(--blue)','var(--violet)','var(--pink)',
+              'var(--green)','var(--pink)','var(--red)','var(--amber)','var(--teal)','var(--blue)'];
+let pAnim = null;
+function pipeCalc(){
+  const k = +$('#p-k').value, n = +$('#p-n').value;
+  return {k, n, non: k*n, pip: k + (n-1)};
+}
+function drawPipe(upto){
+  const {k,n,non,pip} = pipeCalc();
+  $('#l-k').textContent = k; $('#l-n').textContent = n;
+  let html = '<tr><td class="lb"></td>';
+  for (let c=1;c<=pip;c++) html += '<th>'+c+'</th>';
+  html += '</tr>';
+  for (let i=0;i<n;i++){
+    html += '<tr><td class="lb">Instr '+String.fromCharCode(65+i)+'</td>';
+    for (let c=0;c<pip;c++){
+      const st = c - i;                       // which stage instruction i is in at cycle c
+      const active = st>=0 && st<k && c<=upto;
+      html += '<td><div class="cell'+(active?' act':'')+'"'
+           + (active?' style="background:'+PCOL[i%PCOL.length]+'"':'')+'>'
+           + (active ? STAGES[st][0] : '') + '</div></td>';
+    }
+    html += '</tr>';
+  }
+  $('#ptab').innerHTML = html;
+  $('#plegend').innerHTML = STAGES.slice(0,k).map(s =>
+    `<span><i class="sw key">${s[0]}</i>${s}</span>`).join('')
+    + '<span class="lnote">Colour identifies the instruction, not the stage.</span>';
+  $('#p-non').textContent = non;
+  $('#p-pip').textContent = pip;
+  $('#p-saved').textContent = non - pip;
+  $('#p-spd').textContent = (non/pip).toFixed(2)+'×';
+  $('#p-work').innerHTML =
+`without pipelining = k × n = <b>${k}</b> × <b>${n}</b> = <span class="r">${non} cycles</span>
+with pipelining    = k + (n − 1) = <b>${k}</b> + ${n-1} = <span class="r">${pip} cycles</span>
+
+cycles saved = ${non} − ${pip} = <span class="r">${non-pip}</span>
+speed-up     = ${non} ÷ ${pip} = <span class="r">${(non/pip).toFixed(2)}×</span>`;
+}
+function playPipe(){
+  clearInterval(pAnim);
+  const {pip} = pipeCalc();
+  let c = -1;
+  drawPipe(-1);
+  pAnim = setInterval(()=>{ c++; drawPipe(c); if (c >= pip) clearInterval(pAnim); }, 330);
+}
+['p-k','p-n'].forEach(id=>$('#'+id).addEventListener('input', playPipe));
+$('#p-play').addEventListener('click', playPipe);
+drawPipe(99);
+
+/* ================= BUS ================= */
+const DW = [8,16,32,64];
+function drawBus(){
+  const aw = +$('#b-aw').value;
+  const dw = DW[+$('#b-dwr').value];
+  const clk = +$('#b-clk').value * 10;        // MHz
+  $('#l-aw').textContent = aw+' bits';
+  $('#l-dw').textContent = dw+' bits';
+  $('#l-clk').textContent = clk+' MHz';
+
+  $('#b-bits').innerHTML = Array.from({length:32},(_,i)=>
+    `<div class="bit${i>=32-aw?' on':''}">${i>=32-aw?'1':'0'}</div>`).join('');
+
+  const locs = Math.pow(2, aw);
+  $('#b-loc').textContent = locs > 1e12 ? locs.toExponential(2) : fmt(locs);
+  const bytes = locs;
+  const cap = bytes>=1073741824 ? (bytes/1073741824).toFixed(bytes%1073741824?2:0)+' GiB'
+            : bytes>=1048576 ? (bytes/1048576).toFixed(bytes%1048576?2:0)+' MiB'
+            : bytes>=1024 ? (bytes/1024).toFixed(bytes%1024?2:0)+' KiB'
+            : bytes+' B';
+  $('#b-cap').textContent = cap;
+  $('#b-dw').textContent = dw+' bits';
+  const rate = dw/8 * clk * 1e6;
+  $('#b-rate').textContent = (rate/1e6).toFixed(0)+' MB/s';
+
+  const CELLS = 256;
+  const filled = Math.min(CELLS, Math.round(aw/32 * CELLS));
+  $('#b-map').innerHTML = Array.from({length:CELLS},(_,i)=>
+    `<div class="mcell${i<filled?' on':''}"></div>`).join('');
+
+  $('#b-work').innerHTML =
+`addressable locations = 2^n  where n = address bus width
+                      = 2^<b>${aw}</b> = <span class="r">${fmt(locs)}</span>
+at one byte each      = <span class="r">${cap}</span>
+
+transfer rate = (data bus ÷ 8) × clock
+              = (<b>${dw}</b> ÷ 8) × <b>${clk}</b> MHz = <span class="r">${(rate/1e6).toFixed(0)} MB/s</span>`;
+}
+['b-aw','b-dwr','b-clk'].forEach(id=>$('#'+id).addEventListener('input', drawBus));
+drawBus();
+</script>
+</body>
+</html>

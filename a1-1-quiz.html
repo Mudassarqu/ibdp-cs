@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="A1.1 Quiz Arena — 41 timed questions with explanations, results saved to one Google Sheet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>A1.1 Quiz Arena</title>
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#070A11; --panel:#0F1521; --panel2:#151D2D; --line:#22304A;
+  --fg:#EAF0F8; --muted:#8E9EBA; --dim:#5A6882;
+  --teal:#2DD4BF; --blue:#60A5FA; --red:#F87171; --amber:#FBBF24;
+  --violet:#A78BFA; --green:#4ADE80; --pink:#F472B6;
+  --k1:#E21B3C; --k2:#1368CE; --k3:#D89E00; --k4:#26890C;
+  --mono:'SF Mono',ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.app{min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.on{display:flex}
+button{font-family:var(--sans)}
+
+/* ---------- START ---------- */
+.startwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:28px 18px}
+.startcard{width:100%;max-width:560px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px}
+.logo{width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,var(--violet),var(--blue));display:grid;place-items:center;font-family:var(--mono);font-size:15px;font-weight:700;color:#06101F;margin-bottom:16px}
+.startcard h1{margin:0 0 6px;font-size:26px;font-weight:800;letter-spacing:-.6px}
+.startcard .sub{margin:0 0 24px;color:var(--muted);font-size:13.5px;line-height:1.6}
+label.fld{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 7px}
+input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;color:var(--fg);font-size:16px;font-family:var(--sans)}
+input[type=text]:focus{outline:none;border-color:var(--violet)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:18px}
+.optrow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:17px}
+.chip{padding:8px 13px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:.14s}
+.chip:hover{color:var(--fg)}
+.chip.on{border-color:var(--violet);color:var(--violet);background:rgba(167,139,250,.14)}
+.go{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--violet),var(--blue));color:#06101F;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.2px;margin-top:4px}
+.go:disabled{opacity:.4;cursor:not-allowed}
+.note{margin-top:16px;font-size:11.5px;color:var(--dim);line-height:1.6}
+
+/* ---------- QUIZ ---------- */
+.bar{flex:none;display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+.pill.sub{color:var(--teal);border-color:rgba(45,212,191,.4)}
+.pill.hl{color:var(--amber);border-color:rgba(251,191,36,.45)}
+.who{font-size:12.5px;color:var(--muted);font-weight:600}
+.scorebox{margin-left:auto;display:flex;gap:16px;align-items:center}
+.scorebox div{text-align:right}
+.scorebox .k{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);font-weight:700;display:block}
+.scorebox .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.scorebox .v.st{color:var(--amber)}
+CO
+.timerwrap{flex:none;height:7px;background:var(--panel2)}
+#tbar{height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--amber));transition:width .1s linear}
+#tbar.warn{background:linear-gradient(90deg,var(--amber),var(--red))}
+
+.qwrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:26px 22px 34px;max-width:1080px;width:100%;margin:0 auto}
+.qhead{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.tnum{font-family:var(--mono);font-size:30px;font-weight:800;color:var(--amber);min-width:52px;text-align:center;line-height:1}
+.qtext{font-size:22px;line-height:1.45;font-weight:700;letter-spacing:-.3px;margin:0 0 22px}
+.qtext b{color:var(--teal)}
+.qtext input.blank{display:inline-block;width:190px;background:var(--bg);border:none;border-bottom:3px solid var(--amber);border-radius:0;padding:4px 8px;color:var(--amber);font-size:21px;font-weight:700;font-family:var(--mono);text-align:center}
+.qtext input.blank:focus{outline:none;border-bottom-color:var(--teal);color:var(--teal)}
+.hint{font-size:12.5px;color:var(--dim);margin:0 0 16px}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{display:flex;align-items:center;gap:14px;padding:20px 20px;border-radius:13px;border:none;color:#fff;font-size:16px;font-weight:700;cursor:pointer;text-align:left;line-height:1.4;transition:.12s;min-height:86px}
+.opt:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.opt .sym{font-size:19px;flex:none;width:26px;text-align:center}
+.opt:nth-child(1){background:var(--k1)} .opt:nth-child(2){background:var(--k2)}
+.opt:nth-child(3){background:var(--k3)} .opt:nth-child(4){background:var(--k4)}
+.opt.dim{opacity:.25;transform:none}
+.opt.win{outline:4px solid #fff;outline-offset:-4px}
+.opts.tf{grid-template-columns:1fr 1fr}
+.opts.tf .opt{min-height:110px;font-size:21px;justify-content:center}
+
+/* match */
+.matchwrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mcol{display:flex;flex-direction:column;gap:9px}
+.mhead{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:2px}
+.mitem{padding:14px 15px;border-radius:11px;border:2px solid var(--line);background:var(--panel);color:var(--fg);font-size:14px;font-weight:600;cursor:pointer;text-align:left;line-height:1.45;transition:.12s}
+.mitem:hover{border-color:var(--violet)}
+.mitem.sel{border-color:var(--amber);background:rgba(251,191,36,.12)}
+.mitem.done{cursor:default}
+.mitem .tag{float:right;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-left:8px}
+
+/* order */
+.orderwrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.slot{display:flex;align-items:center;gap:11px;padding:13px 15px;border-radius:11px;border:2px dashed var(--line);color:var(--dim);font-size:14px;min-height:52px}
+.slot.filled{border-style:solid;border-color:var(--teal);background:var(--panel);color:var(--fg);font-weight:600;cursor:pointer}
+.slot .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--amber);flex:none;width:18px}
+.pool{display:flex;flex-direction:column;gap:9px}
+.pitem{padding:13px 15px;border-radius:11px;border:2px solid var(--line);background:var(--panel);color:var(--fg);font-size:14px;font-weight:600;cursor:pointer;text-align:left;line-height:1.4}
+.pitem:hover{border-color:var(--teal)}
+.pitem.used{opacity:.25;pointer-events:none}
+
+.submitrow{margin-top:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{padding:13px 24px;border-radius:11px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font-size:14px;font-weight:700;cursor:pointer}
+.btn.pri{border:none;background:linear-gradient(135deg,var(--violet),var(--blue));color:#06101F}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* feedback overlay */
+.fb{position:fixed;inset:0;background:rgba(5,8,14,.93);display:none;align-items:center;justify-content:center;padding:22px;z-index:50}
+.fb.on{display:flex}
+.fbcard{width:100%;max-width:680px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px;max-height:88vh;overflow:auto}
+.fbtop{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.verdict{font-size:25px;font-weight:800;letter-spacing:-.5px}
+.verdict.ok{color:var(--green)} .verdict.no{color:var(--red)} .verdict.part{color:var(--amber)}
+.pts{margin-left:auto;font-family:var(--mono);font-size:24px;font-weight:800;color:var(--amber)}
+.correctbox{background:var(--panel2);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:13px 15px;margin-bottom:15px}
+.correctbox .k{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:5px}
+.correctbox .v{font-size:14.5px;font-weight:700;line-height:1.5}
+.expbox{font-size:14px;line-height:1.72;color:#C9D5E8}
+.expbox b{color:var(--fg)}
+.fbref{margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fbbtn{margin-top:20px;width:100%;padding:15px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--violet),var(--blue));color:#06101F;font-size:15px;font-weight:800;cursor:pointer}
+
+/* ---------- RESULTS ---------- */
+.rwrap{flex:1;padding:30px 22px 50px;max-width:1000px;width:100%;margin:0 auto}
+.rhero{text-align:center;padding:26px 20px 30px;background:var(--panel);border:1px solid var(--line);border-radius:18px;margin-bottom:20px}
+.rhero .nm{font-size:14px;color:var(--muted);margin-bottom:10px;font-weight:600}
+.rscore{font-family:var(--mono);font-size:58px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:6px}
+.rpct{font-size:16px;color:var(--muted);font-weight:600}
+.rgrade{display:inline-block;margin-top:16px;padding:9px 22px;border-radius:11px;font-size:15px;font-weight:800}
+.rstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:22px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.stat .k{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim);display:block;margin-bottom:5px}
+.stat .v{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--teal)}
+h3.rh{font-size:14px;font-weight:700;margin:26px 0 12px;color:var(--fg)}
+.subrow{display:flex;align-items:center;gap:12px;margin-bottom:9px;font-size:13px}
+.subrow .cd{font-family:var(--mono);font-size:11px;color:var(--muted);width:52px;flex:none}
+.subrow .nm{flex:1;min-width:0;color:#C9D5E8}
+.track{width:170px;height:8px;border-radius:5px;background:var(--panel2);overflow:hidden;flex:none}
+.track i{display:block;height:100%;border-radius:5px}
+.subrow .sc{font-family:var(--mono);font-size:12px;color:var(--muted);width:52px;text-align:right;flex:none}
+.rev{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:9px;overflow:hidden}
+.revtop{padding:13px 16px;display:flex;gap:11px;align-items:flex-start;cursor:pointer}
+.revtop:hover{background:var(--panel2)}
+.mark{flex:none;width:21px;height:21px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:800;margin-top:1px}
+.mark.ok{background:var(--green);color:#052E16} .mark.no{background:var(--red);color:#2A0606}
+.mark.part{background:var(--amber);color:#2A1C04}
+.revq{flex:1;font-size:13.5px;line-height:1.5}
+.revp{font-family:var(--mono);font-size:11.5px;color:var(--muted);flex:none}
+.revbody{display:none;padding:0 16px 15px 48px}
+.rev.open .revbody{display:block}
+.revbody .line{font-size:13px;line-height:1.7;color:#C9D5E8;margin-bottom:7px}
+.revbody .line b{color:var(--fg)}
+.sendbox{margin-top:24px;padding:16px 18px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-size:13px;line-height:1.65;color:var(--muted)}
+.sendbox.ok{border-color:rgba(74,222,128,.4);color:var(--green)}
+.sendbox.err{border-color:rgba(248,113,113,.4);color:var(--red)}
+.rbtns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+
+@media (max-width:760px){
+  .opts,.matchwrap,.orderwrap,.row2{grid-template-columns:1fr}
+  .qtext{font-size:18px}
+  .opt{min-height:68px;font-size:14.5px;padding:16px}
+  .rscore{font-size:44px}
+  .qwrap{padding:20px 16px 26px}
+  .bar{padding:10px 16px;gap:9px}
+  .track{width:92px}
+  .qtext input.blank{width:140px;font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ================= START ================= -->
+<section class="screen on" id="s-start">
+  <div class="startwrap"><div class="startcard">
+    <div class="logo">A1.1</div>
+    <h1>Quiz Arena</h1>
+    <p class="sub">Computer hardware and operation. Answer fast for more points — the timer rewards speed, and a streak multiplies it. Every answer comes with an explanation.</p>
+
+    <div class="row2">
+      <div><label class="fld">Your name</label><input type="text" id="f-name" placeholder="e.g. Aisha Khan" autocomplete="off" maxlength="40"></div>
+      <div><label class="fld">Class / section</label><input type="text" id="f-class" placeholder="e.g. DP1 HL" autocomplete="off" maxlength="24"></div>
+    </div>
+
+    <label class="fld">Level</label>
+    <div class="optrow" id="o-level">
+      <button class="chip on" data-v="sl">SL — core only</button>
+      <button class="chip" data-v="hl">HL — includes A1.1.3 &amp; A1.1.6</button>
+    </div>
+
+    <label class="fld">Number of questions</label>
+    <div class="optrow" id="o-len">
+      <button class="chip" data-v="10">10 — quick fire</button>
+      <button class="chip on" data-v="20">20 — standard</button>
+      <button class="chip" data-v="0">All</button>
+    </div>
+
+    <label class="fld">Pace</label>
+    <div class="optrow" id="o-pace">
+      <button class="chip" data-v="1.5">Relaxed</button>
+      <button class="chip on" data-v="1">Normal</button>
+      <button class="chip" data-v="0.7">Fast</button>
+    </div>
+
+    <button class="go" id="start" disabled>Enter your name to start</button>
+    <p class="note" id="startnote"></p>
+    <p style="text-align:center;margin:16px 0 0"><a class="ibdp-back" href="index.html">&larr; All topics</a></p>
+  </div></div>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section class="screen" id="s-quiz">
+  <div class="bar">
+    <span class="who" id="b-who"></span>
+    <span class="pill" id="b-prog">1 / 20</span>
+    <span class="pill sub" id="b-sub">A1.1.1</span>
+    <span class="pill hl" id="b-hl" style="display:none">HL</span>
+    <div class="scorebox">
+      <div><span class="k">Streak</span><span class="v st" id="b-streak">0</span></div>
+      <div><span class="k">Score</span><span class="v" id="b-score">0</span></div>
+    </div>
+  </div>
+  <div class="timerwrap"><div id="tbar"></div></div>
+  <div class="qwrap">
+    <div class="qhead"><span class="tnum" id="b-time">20</span><span style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:1px" id="b-type">Multiple choice</span></div>
+    <h2 class="qtext" id="q-text"></h2>
+    <p class="hint" id="q-hint"></p>
+    <div id="q-body"></div>
+    <div class="submitrow" id="q-submit" style="display:none">
+      <button class="btn pri" id="btn-lock">Lock in answer</button>
+      <button class="btn" id="btn-clear">Clear</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULTS ================= -->
+<section class="screen" id="s-results">
+  <div class="rwrap">
+    <div class="rhero">
+      <div class="nm" id="r-who"></div>
+      <div class="rscore" id="r-score">0</div>
+      <div class="rpct" id="r-pct"></div>
+      <div class="rgrade" id="r-grade"></div>
+    </div>
+    <div class="rstats" id="r-stats"></div>
+    <h3 class="rh">Performance by subtopic</h3>
+    <div id="r-subs"></div>
+    <h3 class="rh">Review every question</h3>
+    <div id="r-review"></div>
+    <div class="sendbox" id="r-send"></div>
+    <div class="rbtns">
+      <button class="btn pri" id="btn-again">Try again</button>
+      <button class="btn" id="btn-csv">Download my results (CSV)</button>
+      <a class="ibdp-back" href="index.html">&larr; All topics</a>
+    </div>
+  </div>
+</section>
+
+<!-- feedback -->
+<div class="fb" id="fb"><div class="fbcard">
+  <div class="fbtop"><span class="verdict" id="fb-v"></span><span class="pts" id="fb-p"></span></div>
+  <div class="correctbox"><div class="k">Correct answer</div><div class="v" id="fb-a"></div></div>
+  <div class="expbox" id="fb-e"></div>
+  <div class="fbref"><span class="pill sub" id="fb-sub"></span><span class="pill" id="fb-ref"></span></div>
+  <button class="fbbtn" id="fb-next">Next question</button>
+</div></div>
+</div>
+
+<script>
+/* =======================================================================
+   ONE SHEET FOR THE WHOLE COURSE.
+   Paste the SAME Apps Script Web App URL into every topic's quiz — all of
+   them write to the one spreadsheet. QUIZ_TOPIC and QUIZ_TITLE are what
+   keep the rows apart: they become the Topic and Quiz columns, so you can
+   filter or pivot the sheet by topic.
+   When you copy this file for a new topic, change those two lines only.
+   ======================================================================= */
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby9LmOlkLAuguW1R_DJojQN2vhrvZ9w0ZraOzwVj6aeyjcODIqLStaENLO9fyl_IhKy/exec';
+const QUIZ_TOPIC = 'A1.1';
+const QUIZ_TITLE = 'Computer hardware and operation';
+/* ======================================================================= */
+
+/* ============================================================
+   A1.1 QUESTION BANK
+   type: mcq | tf | fill | match | order
+   t   : seconds allowed
+   sub : syllabus code   ref : Hodder page
+   ============================================================ */
+const BANK = [
+
+/* ---------- A1.1.1 CPU components ---------- */
+{type:'mcq', sub:'A1.1.1', ref:'p. 3', t:20,
+ q:'Which register holds the address of the <b>next</b> instruction to be fetched from memory?',
+ opts:['Instruction register (IR)','Program counter (PC)','Memory address register (MAR)','Accumulator (AC)'], a:1,
+ exp:'The <b>program counter</b> holds the address of the next instruction. Once that instruction has been fetched, the PC updates to point to the one after it. The IR holds the instruction <i>currently being executed</i> — a very common mix-up.'},
+
+{type:'mcq', sub:'A1.1.1', ref:'p. 2', t:20,
+ q:'Which unit performs the logic operations AND, OR, XOR and NOT?',
+ opts:['Control unit (CU)','Accumulator (AC)','Arithmetic logic unit (ALU)','Memory data register (MDR)'], a:2,
+ exp:'The <b>ALU</b> performs both arithmetic operations (addition, subtraction, multiplication, division) <i>and</i> logic operations (AND, OR, XOR, NOT). The control unit directs operations; it does not carry out the arithmetic itself.'},
+
+{type:'match', sub:'A1.1.1', ref:'p. 3', t:60,
+ q:'Match each register to what it holds.',
+ pairs:[
+  ['IR','The instruction currently being executed'],
+  ['PC','The address of the next instruction'],
+  ['MAR','The memory address currently being fetched'],
+  ['MDR','The data fetched from, or about to be written to, memory'],
+  ['AC','Intermediate results produced by the ALU']],
+ exp:'The flow is: <b>PC</b> supplies the address → copied to <b>MAR</b> → memory returns the data into <b>MDR</b> → the instruction lands in <b>IR</b> → arithmetic results collect in <b>AC</b>.'},
+
+{type:'fill', sub:'A1.1.1', ref:'p. 3', t:25,
+ q:'The width of the <input> bus determines the memory capacity of the system.',
+ ans:['address'],
+ exp:'The <b>address bus</b> transmits the address to be read from or written to. Its width sets how many distinct addresses can exist — a 32-bit address bus can reach 2<sup>32</sup> locations. The <i>data</i> bus width determines how much data moves at once, which is a different thing.'},
+
+{type:'tf', sub:'A1.1.1', ref:'p. 3', t:15,
+ q:'The data bus is unidirectional — data can only travel from memory to the CPU.',
+ a:false,
+ exp:'<b>False.</b> Data must be both read from and written to memory, so the data bus is <b>bidirectional</b>. The control bus is bidirectional too. Only the <b>address bus</b> is unidirectional — addresses always travel out from the CPU.'},
+
+{type:'mcq', sub:'A1.1.1', ref:'p. 4', t:25,
+ q:'A student says a quad-core processor will always run a program four times faster than a single-core processor. Why is this wrong?',
+ opts:[
+  'Extra cores always run at a lower clock speed',
+  'The speed gain depends on whether the software is written to use multiple cores',
+  'Quad-core processors share a single cache, which halves performance',
+  'Only the first core can access the data bus'], a:1,
+ exp:'Many programs are <b>not designed to use multiple cores</b>, so extra cores may make no noticeable difference. Memory speed and CPU design also affect performance. This is flagged as a common mistake in the textbook.'},
+
+{type:'fill', sub:'A1.1.1', ref:'p. 4', t:25,
+ q:'A special processor with a specific job that supports the main CPU, allowing offloaded tasks to run in parallel, is called a <input>.',
+ ans:['co-processor','coprocessor','co processor'],
+ exp:'A <b>co-processor</b> is built for a distinct purpose, so it achieves better performance on that task than a general-purpose CPU. Examples from the textbook: GPUs, audio processors and digital signal processors (DSPs).'},
+
+/* ---------- A1.1.2 GPU ---------- */
+{type:'mcq', sub:'A1.1.2', ref:'p. 5', t:20,
+ q:'What feature of a GPU’s architecture makes it so well suited to rendering graphics?',
+ opts:[
+  'A small number of extremely fast cores',
+  'Thousands of small cores that process many calculations simultaneously',
+  'A much larger L1 cache than a CPU',
+  'Direct access to secondary storage'], a:1,
+ exp:'A GPU has <b>thousands of small, efficient cores working in parallel</b>. Rendering applies the same operation to very many pixels at once, which maps directly onto that architecture. This single idea answers almost every GPU question.'},
+
+{type:'fill', sub:'A1.1.2', ref:'p. 5', t:25,
+ q:'GPUs apply <input> and textures to 3D models, adding lighting and shading to enhance realism.',
+ ans:['shaders','shader'],
+ exp:'<b>Shaders and textures</b> are techniques used in 3D rendering to apply effects, lighting and detail to models. The textbook defines them together as one key term.'},
+
+{type:'mcq', sub:'A1.1.2', ref:'pp. 5–6', t:25,
+ q:'Why did GPUs become essential for AI and machine learning?',
+ opts:[
+  'They have far more RAM than a CPU',
+  'AI models rely heavily on matrix and vector multiplications, which GPUs process far faster',
+  'They can run the operating system independently of the CPU',
+  'They use non-volatile memory, so training data survives a power cut'], a:1,
+ exp:'Many AI models depend on <b>matrix and vector multiplications</b>. GPUs far outperform CPUs at these because they perform many simple calculations simultaneously, and many GPUs can run in parallel — which dramatically cut model training times.'},
+
+{type:'tf', sub:'A1.1.2', ref:'p. 6', t:15,
+ q:'ASICs — chips designed specifically for mining — have largely replaced GPUs in many cryptocurrency mining operations.',
+ a:true,
+ exp:'<b>True.</b> The textbook gives this as one of three reasons GPU demand and prices stabilised after 2023, alongside the reduced profitability of mining and manufacturers increasing production.'},
+
+/* ---------- A1.1.3 CPU vs GPU (HL) ---------- */
+{type:'mcq', sub:'A1.1.3', ref:'p. 7', t:20, hl:true,
+ q:'What type of memory does a GPU use, and why?',
+ opts:[
+  'ROM, because rendering instructions never change',
+  'L3 cache, because it is shared between cores',
+  'VRAM, because its very high bandwidth moves large amounts of data at once',
+  'The same system RAM as the CPU, to avoid duplication'], a:2,
+ exp:'A GPU uses its own <b>VRAM (video RAM)</b>, which has very high bandwidth so it can move large blocks of data such as images and video. The CPU instead relies on a smaller, high-speed cache for repeatedly accessing small amounts of data.'},
+
+{type:'mcq', sub:'A1.1.3', ref:'p. 7', t:20, hl:true,
+ q:'Which processor uses branch prediction and out-of-order execution?',
+ opts:['The GPU','The CPU','Both equally','Neither — these are operating system functions'], a:1,
+ exp:'These are <b>CPU</b> features. Branch prediction guesses what will happen next and out-of-order execution works on tasks that are ready before others — both suit a processor that must make quick decisions across varied tasks.'},
+
+{type:'match', sub:'A1.1.3', ref:'pp. 7–8', t:55, hl:true,
+ q:'Match each characteristic to the processor it describes.',
+ pairs:[
+  ['Few, very powerful cores','CPU'],
+  ['Hundreds or thousands of small cores','GPU'],
+  ['Handles game logic, physics and AI behaviour','CPU'],
+  ['Processes vertex and pixel data to draw the frame','GPU']],
+ exp:'In a game the <b>CPU</b> handles core logic and player input, then sends the updated state to the <b>GPU</b>, which renders the visuals. Note two items share each answer — matching questions will not always pair one-to-one.'},
+
+/* ---------- A1.1.4 Primary memory ---------- */
+{type:'mcq', sub:'A1.1.4', ref:'p. 9', t:20,
+ q:'Which statement about RAM is correct?',
+ opts:[
+  'It is non-volatile and stores the BIOS',
+  'It is volatile and holds data for programs currently running',
+  'It is located directly on the CPU and split into L1i and L1d',
+  'It is slower than secondary storage but cheaper'], a:1,
+ exp:'<b>RAM is volatile</b> — it loses its contents when power is turned off — and holds instructions and data for programs <b>currently running</b>. That is why unsaved game progress is lost: saving writes it to secondary storage instead.'},
+
+{type:'fill', sub:'A1.1.4', ref:'p. 10', t:25,
+ q:'When the CPU requests data and it is <b>not</b> found in the cache, this is called a cache <input>.',
+ ans:['miss'],
+ exp:'A <b>cache miss</b> forces retrieval from slower main memory (RAM) or even slower storage, causing a delay. A cache <i>hit</i> is the ideal case. The percentage <b>hit rate</b> is what determines overall cache efficiency.'},
+
+{type:'order', sub:'A1.1.4', ref:'p. 9', t:40,
+ q:'Put these in the order the CPU searches them when trying to retrieve data — fastest first.',
+ items:['CPU registers','Cache memory','Main memory (RAM)','Secondary memory'],
+ exp:'The CPU checks the <b>closest and fastest</b> store first and works outwards. Each step out is larger but slower — which is exactly why a high cache hit rate matters so much for performance.'},
+
+{type:'mcq', sub:'A1.1.4', ref:'p. 10', t:20,
+ q:'Which level of cache is typically <b>shared</b> across multiple cores?',
+ opts:['L1','L2','L3','None — all cache is exclusive to one core'], a:2,
+ exp:'<b>L3</b> is furthest from the CPU chip and may be shared across cores. L1 and L2 are usually exclusive to a single core. L3 is the largest (2MB–64MB) and slowest of the three, but still significantly faster than RAM.'},
+
+{type:'match', sub:'A1.1.4', ref:'p. 10', t:50,
+ q:'Match each cache level to its typical size.',
+ pairs:[
+  ['L1','32KB – 128KB per core'],
+  ['L2','256KB – 2MB per core'],
+  ['L3','2MB – 64MB shared across cores']],
+ exp:'Remember the onion: <b>L1</b> is the tight centre, <b>L2</b> the next layer, <b>L3</b> the outer layer. Size goes up and speed goes down as you move away from the core.'},
+
+{type:'tf', sub:'A1.1.4', ref:'p. 9', t:15,
+ q:'ROM is non-volatile, which is why it can reliably store the BIOS.',
+ a:true,
+ exp:'<b>True.</b> ROM keeps its contents without power, so the BIOS is always there to initialize and test the hardware on startup and load the OS into RAM. Most modern computers use flash memory for this, allowing firmware updates.'},
+
+/* ---------- A1.1.5 FDE cycle ---------- */
+{type:'order', sub:'A1.1.5', ref:'pp. 12–13', t:50,
+ q:'Put the <b>fetch</b> stage into the correct sequence.',
+ items:[
+  'The address in the PC is copied into the MAR',
+  'The address bus carries that address to open the location in RAM',
+  'The control bus sends a read signal',
+  'The data bus carries the instruction back into the MDR, then the IR',
+  'The PC is incremented via the ALU'],
+ exp:'All three buses appear in the fetch stage, which is exactly what the syllabus asks you to describe. Note the <b>PC increments during or immediately after fetch</b> — not after execute.'},
+
+{type:'mcq', sub:'A1.1.5', ref:'p. 13', t:20,
+ q:'At which point in the fetch–decode–execute cycle is the program counter updated?',
+ opts:[
+  'After the execute stage, once the instruction has completed',
+  'During or immediately after the fetch stage',
+  'Only when a branch instruction is decoded',
+  'At the end of every clock cycle regardless of stage'], a:1,
+ exp:'The PC is updated <b>during or immediately after fetch</b>, so it already points at the next instruction before the current one is decoded or executed. Assuming it updates after execute is listed as a common mistake in the textbook.'},
+
+{type:'fill', sub:'A1.1.5', ref:'p. 12', t:25,
+ q:'During the fetch stage, the <input> bus sends the read signal that initiates the transfer.',
+ ans:['control'],
+ exp:'The <b>control bus</b> carries command and control signals — read/write operations, interrupt requests, clock signals and status signals. The address bus carries the location; the data bus carries the content.'},
+
+{type:'mcq', sub:'A1.1.5', ref:'p. 11', t:20,
+ q:'In Little Man Computer, an instruction stored as <b>504</b> means:',
+ opts:[
+  'Store the accumulator at address 04',
+  'Add the value at address 04 to the accumulator',
+  'Load the value at address 04 into the accumulator',
+  'Branch to address 04 if the accumulator is zero'], a:2,
+ exp:'<b>5XX = LDA</b>, "load the value from the specified memory address into the accumulator". The 5 goes into the instruction register and 04 into the address register. For reference: 1XX = ADD, 2XX = SUB, 3XX = STA, 6XX = BRA.'},
+
+{type:'order', sub:'A1.1.5', ref:'p. 11', t:30,
+ q:'Put the three stages of the instruction cycle in order.',
+ items:['Fetch','Decode','Execute'],
+ exp:'The cycle repeats for every machine-language instruction a program contains — which is why it is also called the <b>instruction cycle</b>, and why it is fundamental to everything a CPU does.'},
+
+/* ---------- A1.1.6 Pipelining (HL) ---------- */
+{type:'mcq', sub:'A1.1.6', ref:'pp. 14–15', t:45, hl:true,
+ q:'A CPU uses a <b>five-stage</b> pipeline. How many clock cycles are needed to complete <b>four</b> instructions?',
+ opts:['4 cycles','8 cycles','9 cycles','20 cycles'], a:1,
+ exp:'Use <b>k + (n − 1)</b> where k = 5 stages and n = 4 instructions: 5 + 3 = <b>8 cycles</b>. The first instruction takes all five cycles, then each later one finishes just one cycle behind. Without pipelining it would be 5 × 4 = 20 cycles.'},
+
+{type:'fill', sub:'A1.1.6', ref:'p. 14', t:25, hl:true,
+ q:'Intermediate outputs held between two pipeline stages are stored in <input> registers, also called latches or buffers.',
+ ans:['interface'],
+ exp:'<b>Interface registers</b> hold the output of one stage until the next stage is ready. All stages and interface registers are synchronized by a <b>common clock</b>, which keeps the whole pipeline co-ordinated.'},
+
+{type:'order', sub:'A1.1.6', ref:'p. 15', t:45, hl:true,
+ q:'Put the five stages of a basic instruction pipeline in order.',
+ items:['Fetch','Decode','Execute','Memory access','Write back'],
+ exp:'The output of each stage becomes the input of the next. A well-optimized pipeline approaches <b>one instruction per cycle</b> by keeping every stage busy rather than idle.'},
+
+{type:'tf', sub:'A1.1.6', ref:'pp. 15–16', t:20, hl:true,
+ q:'In parallel execution, multiple cores work on different parts of a single large task at the same time.',
+ a:true,
+ exp:'<b>True.</b> That is parallel execution — several teams working on one car. <b>Independent</b> execution is different: each core runs its own separate pipeline on its own task, so one busy core never holds up the others.'},
+
+/* ---------- A1.1.7 Secondary storage ---------- */
+{type:'mcq', sub:'A1.1.7', ref:'pp. 16–17', t:20,
+ q:'Why is an SSD more durable than an HDD?',
+ opts:[
+  'It stores data magnetically rather than electrically',
+  'It has no moving parts, so it resists physical shock',
+  'Its platters spin more slowly, reducing wear',
+  'It generates more heat, which prevents condensation'], a:1,
+ exp:'An SSD uses <b>flash memory with no moving parts</b>. An HDD has spinning platters and a moving actuator arm, making it more prone to physical damage — and also noisier, heavier, hotter and more power-hungry.'},
+
+{type:'match', sub:'A1.1.7', ref:'pp. 17–18', t:60,
+ q:'Match each storage type to the situation it best suits.',
+ pairs:[
+  ['eMMC','A budget smartphone where SSD performance is not essential'],
+  ['NAS','Centralised storage several users access over a network'],
+  ['Memory card','Expanding storage in a camera or phone'],
+  ['Optical disc','Low-cost archiving and playback']],
+ exp:'<b>eMMC</b> is soldered to the motherboard and cheap. <b>NAS</b> uses multiple drives in RAID for redundancy and can be expanded. <b>Memory cards</b> resist shock, temperature and water. <b>Optical discs</b> are cheap but scratch easily and need a drive.'},
+
+{type:'fill', sub:'A1.1.7', ref:'p. 18', t:25,
+ q:'A NAS usually combines several drives in a <input> configuration to improve performance and provide redundancy.',
+ ans:['raid'],
+ exp:'<b>RAID</b> — Redundant Array of Independent Disks — combines multiple physical drives into one logical unit to improve performance, provide redundancy and ensure data protection.'},
+
+{type:'tf', sub:'A1.1.7', ref:'p. 17', t:15,
+ q:'An M.2 NVMe SSD is slower than a standard 2.5" SATA SSD.',
+ a:false,
+ exp:'<b>False.</b> M.2 NVMe SSDs are <b>faster</b> than 2.5" SATA SSDs, as well as much smaller and easier to install — they slot straight into the motherboard and are held by a single screw.'},
+
+/* ---------- A1.1.8 Compression ---------- */
+{type:'mcq', sub:'A1.1.8', ref:'p. 20', t:35,
+ q:'Apply run-length encoding to <b>AAAABBB</b>. What is the encoded string?',
+ opts:['AAAABBB','4A3B','A4B3','7AB'], a:1,
+ exp:'RLE encodes each run as <b>count followed by character</b>: four As then three Bs gives <b>4A3B</b>. Here 7 characters become 4 — a 43% reduction. For data without repeats, RLE can actually <i>increase</i> file size.'},
+
+{type:'mcq', sub:'A1.1.8', ref:'p. 21', t:25,
+ q:'Which stage of transform coding makes JPEG compression <b>lossy</b>?',
+ opts:[
+  'Constructing the n × n sub-images',
+  'The forward transform (DCT)',
+  'Quantization',
+  'The symbol encoder'], a:2,
+ exp:'<b>Quantization</b> reduces the precision of the high-frequency coefficients — the fine detail — and that precision is permanently discarded. The eye is less sensitive to high-frequency loss, which is why it is acceptable, but it is still a loss.'},
+
+{type:'fill', sub:'A1.1.8', ref:'p. 19', t:25,
+ q:'Lossless compression works by identifying and eliminating statistical <input> within the data.',
+ ans:['redundancy'],
+ exp:'<b>Statistical redundancy</b> is repetition within a data set that does not contribute to its uniqueness. Because only redundancy is removed, the process is reversible and the original can be restored exactly.'},
+
+{type:'order', sub:'A1.1.8', ref:'p. 21', t:45,
+ q:'Put the four stages of transform coding in order.',
+ items:['Construct n × n sub-images','Forward transform (DCT)','Quantizer','Symbol encoder'],
+ exp:'Inside the <b>symbol encoder</b> three further algorithms run in a fixed order: zigzag scan, then run-length encoding, then Huffman coding.'},
+
+{type:'tf', sub:'A1.1.8', ref:'p. 20', t:20,
+ q:'Run-length encoding can sometimes make a file larger than the original.',
+ a:true,
+ exp:'<b>True.</b> For data without many repeated characters — a portrait photograph, for example — RLE may not be effective and may even increase the file size, because single characters become a count-plus-character pair.'},
+
+/* ---------- A1.1.9 Cloud ---------- */
+{type:'match', sub:'A1.1.9', ref:'p. 22', t:50,
+ q:'Match each cloud service model to its example.',
+ pairs:[
+  ['SaaS','Google Workspace'],
+  ['PaaS','Microsoft Azure App Service'],
+  ['IaaS','Amazon Web Services EC2']],
+ exp:'Ask <b>who manages what</b>. SaaS: the provider manages everything, you just use the app. PaaS: the provider manages the infrastructure, you manage your application. IaaS: the provider manages the hardware, you manage everything above it.'},
+
+{type:'mcq', sub:'A1.1.9', ref:'p. 22', t:25,
+ q:'A business needs full control over its virtual machines and networks, and has the technical staff to manage them. Which model fits?',
+ opts:['SaaS','PaaS','IaaS','None — it must buy physical servers'], a:2,
+ exp:'<b>IaaS</b> gives full control over virtual machines and networks, with no upfront hardware investment and easy scaling. The trade-off is that it requires more technical knowledge than PaaS — users manage their own devices and secure their own data.'},
+
+{type:'fill', sub:'A1.1.9', ref:'p. 22', t:30,
+ q:'A drawback of PaaS is vendor <input>, which makes it difficult to move applications to a different platform.',
+ ans:['lock-in','lockin','lock in'],
+ exp:'<b>Vendor lock-in</b> is the main disadvantage of PaaS, together with having less control over the hosting environment. The advantages are faster development and cheaper, easier scaling.'}
+];
+
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const SYMS = ['▲','◆','●','■'];
+const TYPENAME = {mcq:'Multiple choice', tf:'True or false', fill:'Fill in the blank', match:'Match the column', order:'Put in order'};
+const SUBNAME = {
+ 'A1.1.1':'CPU components','A1.1.2':'The GPU','A1.1.3':'CPU vs GPU','A1.1.4':'Primary memory',
+ 'A1.1.5':'FDE cycle','A1.1.6':'Pipelining','A1.1.7':'Secondary storage','A1.1.8':'Compression','A1.1.9':'Cloud services'};
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const esc = s => String(s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+
+let cfg = {level:'sl', len:20, pace:1};
+let Q = [], idx = 0, score = 0, streak = 0, best = 0, log = [], t0 = 0;
+let timer = null, tLeft = 0, tMax = 0, answered = false, state = null, clearFn = null;
+
+/* ---------- start screen ---------- */
+function chips(id, key, cast){
+  $$('#'+id+' .chip').forEach(b => b.addEventListener('click', () => {
+    $$('#'+id+' .chip').forEach(x => x.classList.toggle('on', x===b));
+    cfg[key] = cast(b.dataset.v);
+    note();
+  }));
+}
+chips('o-level','level',String); chips('o-len','len',Number); chips('o-pace','pace',Number);
+function pool(){ return BANK.filter(q => cfg.level==='hl' || !q.hl); }
+function note(){
+  const p = pool().length;
+  const n = cfg.len===0 ? p : Math.min(cfg.len, p);
+  const secs = Math.round(pool().slice(0,n).reduce((a,q)=>a+q.t*cfg.pace,0) + n*6);
+  $('#startnote').textContent = `${n} questions from a bank of ${p} · roughly ${Math.ceil(secs/60)} minutes including feedback.`;
+}
+function checkName(){
+  const ok = $('#f-name').value.trim().length >= 2;
+  $('#start').disabled = !ok;
+  $('#start').textContent = ok ? 'Start the quiz' : 'Enter your name to start';
+}
+$('#f-name').addEventListener('input', checkName);
+$('#f-name').addEventListener('keydown', e => { if(e.key==='Enter' && !$('#start').disabled) begin(); });
+$('#f-class').addEventListener('keydown', e => { if(e.key==='Enter' && !$('#start').disabled) begin(); });
+note(); checkName();
+
+/* ---------- flow ---------- */
+function show(id){ $$('.screen').forEach(s => s.classList.toggle('on', s.id===id)); }
+$('#start').addEventListener('click', begin);
+function begin(){
+  const p = shuffle(pool());
+  Q = cfg.len===0 ? p : p.slice(0, Math.min(cfg.len, p.length));
+  idx=0; score=0; streak=0; best=0; log=[]; t0=Date.now();
+  $('#b-who').textContent = $('#f-name').value.trim() + ($('#f-class').value.trim() ? ' · '+$('#f-class').value.trim() : '');
+  show('s-quiz'); render();
+}
+
+function render(){
+  const q = Q[idx];
+  answered = false; state = null; clearFn = null;
+  $('#btn-lock').disabled = false;
+  $('#b-prog').textContent = (idx+1)+' / '+Q.length;
+  $('#b-sub').textContent = q.sub;
+  $('#b-hl').style.display = q.hl ? '' : 'none';
+  $('#b-score').textContent = score;
+  $('#b-streak').textContent = streak;
+  $('#b-type').textContent = TYPENAME[q.type];
+  $('#q-hint').textContent = '';
+  $('#q-submit').style.display = 'none';
+  const body = $('#q-body'); body.innerHTML = '';
+
+  if (q.type==='fill'){
+    $('#q-text').innerHTML = q.q.replace('<input>','<input class="blank" id="blank" autocomplete="off" spellcheck="false">');
+    $('#q-hint').textContent = 'Type your answer, then press Enter or Lock in.';
+    $('#q-submit').style.display = 'flex';
+    const el = $('#blank');
+    el.addEventListener('keydown', e => { if(e.key==='Enter') lock(); });
+    setTimeout(()=>el.focus(), 60);
+  } else {
+    $('#q-text').innerHTML = q.q;
+  }
+
+  if (q.type==='mcq' || q.type==='tf'){
+    const list = q.type==='tf' ? ['True','False'] : q.opts;
+    const d = document.createElement('div');
+    d.className = 'opts' + (q.type==='tf' ? ' tf' : '');
+    list.forEach((o,i) => {
+      const b = document.createElement('button');
+      b.className='opt'; b.innerHTML = '<span class="sym">'+SYMS[i]+'</span><span>'+o+'</span>';
+      b.addEventListener('click', ()=>{ if(!answered){ state=i; lock(); } });
+      d.appendChild(b);
+    });
+    body.appendChild(d);
+  }
+
+  if (q.type==='match'){
+    state = {};
+    const L = q.pairs.map(p=>p[0]);
+    const R = shuffle([...new Set(q.pairs.map(p=>p[1]))]);
+    const w = document.createElement('div'); w.className='matchwrap';
+    const cl = document.createElement('div'); cl.className='mcol'; cl.innerHTML='<div class="mhead">Item</div>';
+    const cr = document.createElement('div'); cr.className='mcol'; cr.innerHTML='<div class="mhead">Match to</div>';
+    let sel = null;
+    const COL=['var(--teal)','var(--amber)','var(--violet)','var(--pink)','var(--blue)','var(--green)'];
+    L.forEach((l,li)=>{
+      const b=document.createElement('button'); b.className='mitem'; b.dataset.l=l;
+      b.innerHTML='<span>'+l+'</span>';
+      b.addEventListener('click',()=>{ if(answered) return;
+        if(state[l]!==undefined){ delete state[l]; paint(); return; }
+        sel = (sel===l?null:l); paint(); });
+      cl.appendChild(b);
+    });
+    R.forEach((r,ri)=>{
+      const b=document.createElement('button'); b.className='mitem'; b.dataset.r=r;
+      b.innerHTML='<span>'+r+'</span>';
+      b.addEventListener('click',()=>{ if(answered||!sel) return; state[sel]=r; sel=null; paint(); });
+      cr.appendChild(b);
+    });
+    function paint(){
+      cl.querySelectorAll('.mitem').forEach(b=>{
+        const l=b.dataset.l; const has=state[l]!==undefined;
+        b.classList.toggle('sel', sel===l);
+        const i = L.indexOf(l);
+        b.innerHTML = '<span>'+l+'</span>' + (has ? '<span class="tag" style="background:'+COL[i%6]+';color:#06101F">'+esc(state[l]).slice(0,22)+'</span>' : '');
+      });
+      cr.querySelectorAll('.mitem').forEach(b=>{
+        const used = Object.values(state).includes(b.dataset.r);
+        b.style.opacity = used ? .4 : 1;
+      });
+      $('#btn-lock').disabled = Object.keys(state).length !== L.length;
+    }
+    w.appendChild(cl); w.appendChild(cr); body.appendChild(w);
+    $('#q-hint').textContent = 'Click an item on the left, then its match on the right. Click a paired item to undo it.';
+    $('#q-submit').style.display='flex'; paint();
+    clearFn = ()=>{ state = {}; sel = null; paint(); };
+  }
+
+  if (q.type==='order'){
+    state = [];
+    const w = document.createElement('div'); w.className='orderwrap';
+    const slots = document.createElement('div'); slots.className='mcol'; slots.innerHTML='<div class="mhead">Your order</div>';
+    const poolc = document.createElement('div'); poolc.className='pool'; poolc.innerHTML='<div class="mhead">Click to add</div>';
+    const shuf = shuffle(q.items);
+    function paint(){
+      [...slots.querySelectorAll('.slot')].forEach(n=>n.remove());
+      q.items.forEach((_,i)=>{
+        const d=document.createElement('div');
+        d.className='slot'+(state[i]!==undefined?' filled':'');
+        d.innerHTML='<span class="n">'+(i+1)+'</span><span>'+(state[i]!==undefined?esc(state[i]):'—')+'</span>';
+        if(state[i]!==undefined) d.addEventListener('click',()=>{ if(answered) return; state.splice(i,1); paint(); });
+        slots.appendChild(d);
+      });
+      poolc.querySelectorAll('.pitem').forEach(b=>b.classList.toggle('used', state.includes(b.dataset.v)));
+      $('#btn-lock').disabled = state.length !== q.items.length;
+    }
+    shuf.forEach(it=>{
+      const b=document.createElement('button'); b.className='pitem'; b.dataset.v=it; b.textContent=it;
+      b.addEventListener('click',()=>{ if(answered||state.includes(it)) return; state.push(it); paint(); });
+      poolc.appendChild(b);
+    });
+    w.appendChild(slots); w.appendChild(poolc); body.appendChild(w);
+    $('#q-hint').textContent = 'Click items in the right order. Click a filled slot to take it back out.';
+    $('#q-submit').style.display='flex'; paint();
+    clearFn = ()=>{ state.length = 0; paint(); };
+  }
+
+  startTimer(Math.round(q.t * cfg.pace));
+}
+
+function startTimer(secs){
+  tMax = secs; tLeft = secs;
+  $('#b-time').textContent = secs;
+  $('#tbar').style.width='100%'; $('#tbar').classList.remove('warn');
+  clearInterval(timer);
+  const started = Date.now();
+  timer = setInterval(()=>{
+    const el = (Date.now()-started)/1000;
+    tLeft = Math.max(0, tMax - el);
+    $('#b-time').textContent = Math.ceil(tLeft);
+    $('#tbar').style.width = (tLeft/tMax*100)+'%';
+    $('#tbar').classList.toggle('warn', tLeft/tMax < 0.35);
+    if (tLeft <= 0){ clearInterval(timer); if(!answered) lock(true); }
+  }, 100);
+}
+
+/* ---------- marking ---------- */
+function mark(q){
+  if (q.type==='mcq') return {frac: state===q.a ?1:0, given: state!=null? q.opts[state] : '(no answer)', want: q.opts[q.a]};
+  if (q.type==='tf'){ const g = state===0; return {frac: (g===q.a)?1:0, given: state!=null?(g?'True':'False'):'(no answer)', want: q.a?'True':'False'}; }
+  if (q.type==='fill'){
+    const raw = ($('#blank') && $('#blank').value || '').trim();
+    const n = raw.toLowerCase().replace(/[^a-z0-9 -]/g,'').replace(/\s+/g,' ');
+    const ok = q.ans.some(a => a.toLowerCase() === n || n.replace(/-/g,' ') === a.toLowerCase().replace(/-/g,' '));
+    return {frac: ok?1:0, given: raw||'(no answer)', want: q.ans[0]};
+  }
+  if (q.type==='match'){
+    let c=0; q.pairs.forEach(p=>{ if(state && state[p[0]]===p[1]) c++; });
+    return {frac: c/q.pairs.length, given: q.pairs.map(p=>p[0]+' → '+((state&&state[p[0]])||'—')).join(' · '),
+            want: q.pairs.map(p=>p[0]+' → '+p[1]).join(' · '), got:c, of:q.pairs.length};
+  }
+  if (q.type==='order'){
+    let c=0; q.items.forEach((it,i)=>{ if(state && state[i]===it) c++; });
+    return {frac: c/q.items.length, given: (state&&state.length?state.join(' → '):'(no answer)'),
+            want: q.items.join(' → '), got:c, of:q.items.length};
+  }
+}
+
+function lock(timeout){
+  if (answered) return;
+  answered = true; clearInterval(timer);
+  const q = Q[idx];
+  const m = mark(q);
+  const speed = timeout ? 0 : Math.max(0, tLeft/tMax);
+  let pts = 0;
+  if (m.frac > 0){
+    pts = Math.round((500 + 500*speed) * m.frac);
+    if (m.frac === 1){ streak++; best = Math.max(best, streak); pts += 50 * Math.min(streak, 5); }
+    else streak = 0;
+  } else streak = 0;
+  score += pts;
+
+  log.push({n:idx+1, sub:q.sub, type:q.type, ref:q.ref, q:q.q.replace('<input>','______').replace(/<[^>]+>/g,''),
+            given:m.given, want:m.want, frac:m.frac, pts, secs:+(tMax-tLeft).toFixed(1), exp:q.exp});
+
+  if (q.type==='mcq' || q.type==='tf'){
+    const btns = $$('#q-body .opt');
+    const ai = q.type==='tf' ? (q.a?0:1) : q.a;
+    btns.forEach((b,i)=>{ if(i!==ai) b.classList.add('dim'); else b.classList.add('win'); });
+  }
+
+  $('#b-score').textContent = score;
+  $('#b-streak').textContent = streak;
+  $('#fb-v').className = 'verdict ' + (m.frac===1?'ok':m.frac>0?'part':'no');
+  $('#fb-v').textContent = m.frac===1 ? 'Correct' : m.frac>0 ? `Partly right — ${m.got} of ${m.of}` : (timeout?'Time up':'Not quite');
+  $('#fb-p').textContent = pts>0 ? '+'+pts : '0';
+  $('#fb-a').innerHTML = esc(m.want);
+  $('#fb-e').innerHTML = q.exp;
+  $('#fb-sub').textContent = q.sub + ' · ' + SUBNAME[q.sub];
+  $('#fb-ref').textContent = 'Hodder ' + q.ref;
+  $('#fb-next').textContent = idx+1 < Q.length ? 'Next question' : 'See my results';
+  setTimeout(()=>$('#fb').classList.add('on'), 420);
+}
+$('#btn-lock').addEventListener('click', ()=>lock());
+$('#btn-clear').addEventListener('click', ()=>{ if(answered) return;
+  if(Q[idx].type==='fill'){ $('#blank').value=''; $('#blank').focus(); }
+  else if(clearFn) clearFn(); });
+$('#fb-next').addEventListener('click', ()=>{
+  $('#fb').classList.remove('on');
+  if (idx+1 < Q.length){ idx++; render(); } else finish();
+});
+document.addEventListener('keydown', e=>{
+  if ($('#fb').classList.contains('on') && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); $('#fb-next').click(); return; }
+  if (!$('#s-quiz').classList.contains('on') || answered) return;
+  const q = Q[idx];
+  if ((q.type==='mcq'||q.type==='tf') && /^[1-4]$/.test(e.key)){
+    const n = +e.key-1, btns = $$('#q-body .opt');
+    if (btns[n]) btns[n].click();
+  }
+});
+
+/* ---------- results ---------- */
+const GRADES = [[90,'7','var(--green)'],[80,'6','var(--teal)'],[70,'5','var(--blue)'],[60,'4','var(--violet)'],[50,'3','var(--amber)'],[40,'2','var(--pink)'],[0,'1','var(--red)']];
+function finish(){
+  const maxPts = Q.reduce((a)=>a+1050, 0);
+  const correct = log.filter(l=>l.frac===1).length;
+  const partial = log.filter(l=>l.frac>0 && l.frac<1).length;
+  const earned  = log.reduce((a,l)=>a+l.frac,0);
+  const pct = Math.round(earned / Q.length * 100);
+  const g = GRADES.find(x=>pct>=x[0]);
+  const mins = Math.round((Date.now()-t0)/1000);
+
+  $('#r-who').textContent = $('#f-name').value.trim() + ($('#f-class').value.trim()?' · '+$('#f-class').value.trim():'');
+  $('#r-score').textContent = score.toLocaleString();
+  $('#r-score').style.color = g[2];
+  $('#r-pct').textContent = `${earned.toFixed(1)} of ${Q.length} questions · ${pct}%`;
+  $('#r-grade').textContent = 'Grade ' + g[1];
+  $('#r-grade').style.cssText = `background:${g[2]};color:#06101F`;
+
+  $('#r-stats').innerHTML = [
+    ['Correct', correct],['Partly right', partial],['Incorrect', log.filter(l=>l.frac===0).length],
+    ['Best streak', best],['Time taken', Math.floor(mins/60)+'m '+(mins%60)+'s'],
+    ['Avg / question', (mins/Q.length).toFixed(1)+'s']
+  ].map(s=>`<div class="stat"><span class="k">${s[0]}</span><span class="v">${s[1]}</span></div>`).join('');
+
+  const by = {};
+  log.forEach(l=>{ (by[l.sub] = by[l.sub] || {g:0,n:0}); by[l.sub].g += l.frac; by[l.sub].n++; });
+  $('#r-subs').innerHTML = Object.keys(by).sort().map(k=>{
+    const p = Math.round(by[k].g/by[k].n*100);
+    const col = p>=70?'var(--green)':p>=45?'var(--amber)':'var(--red)';
+    return `<div class="subrow"><span class="cd">${k}</span><span class="nm">${SUBNAME[k]}</span>
+      <span class="track"><i style="width:${p}%;background:${col}"></i></span><span class="sc">${p}%</span></div>`;
+  }).join('');
+
+  $('#r-review').innerHTML = log.map(l=>{
+    const cls = l.frac===1?'ok':l.frac>0?'part':'no';
+    const sym = l.frac===1?'✓':l.frac>0?'½':'✗';
+    return `<div class="rev"><div class="revtop"><span class="mark ${cls}">${sym}</span>
+      <span class="revq">${esc(l.q)}</span><span class="revp">${l.pts} pts</span></div>
+      <div class="revbody">
+        <div class="line"><b>Your answer:</b> ${esc(l.given)}</div>
+        <div class="line"><b>Correct answer:</b> ${esc(l.want)}</div>
+        <div class="line" style="margin-top:9px">${l.exp}</div>
+        <div class="line" style="color:var(--dim);font-size:11.5px;margin-top:8px">${l.sub} · Hodder ${l.ref} · answered in ${l.secs}s</div>
+      </div></div>`;
+  }).join('');
+  $$('#r-review .revtop').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+
+  show('s-results');
+  window.scrollTo(0,0);
+  send({topic:QUIZ_TOPIC, quiz:QUIZ_TITLE,
+        name:$('#f-name').value.trim(), cls:$('#f-class').value.trim(), level:cfg.level.toUpperCase(),
+        score, pct, grade:g[1], correct, partial, total:Q.length, earned:+earned.toFixed(2),
+        streak:best, seconds:mins, detail:log});
+}
+
+/* ---------- google sheets ---------- */
+function send(payload){
+  const box = $('#r-send');
+  if (!SHEETS_URL){
+    box.className = 'sendbox';
+    box.innerHTML = '<b>Results not submitted.</b> No Google Sheet is connected yet — your teacher needs to paste the Apps Script Web App URL into the <code>SHEETS_URL</code> line at the top of this page’s script. Your score is still shown above, and you can download it as a CSV.';
+    return;
+  }
+  box.className = 'sendbox';
+  box.textContent = 'Sending your results…';
+  fetch(SHEETS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload)})
+    .then(()=>{ box.className='sendbox ok'; box.innerHTML='<b>Results submitted.</b> Your score and every answer have been saved to your teacher’s Google Sheet.'; })
+    .catch(()=>{ box.className='sendbox err'; box.innerHTML='<b>Could not reach the Google Sheet.</b> Check your connection. Download the CSV below and send it to your teacher instead.'; });
+}
+
+$('#btn-again').addEventListener('click', ()=>{ $('#fb').classList.remove('on'); show('s-start'); note(); });
+$('#btn-csv').addEventListener('click', ()=>{
+  const rows = [['Topic','Name','Class','Q#','Subtopic','Type','Question','Your answer','Correct answer','Score fraction','Points','Seconds','Hodder ref']];
+  log.forEach(l=>rows.push([QUIZ_TOPIC, $('#f-name').value.trim(), $('#f-class').value.trim(), l.n, l.sub, l.type, l.q, l.given, l.want, l.frac.toFixed(2), l.pts, l.secs, l.ref]));
+  const csv = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = QUIZ_TOPIC+'-quiz-'+($('#f-name').value.trim().replace(/\W+/g,'-')||'result')+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+});
+</script>
+
+<style>
+.ibdp-back{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:30px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);color:#2DD4BF;
+  text-decoration:none;font:600 11.5px/1 'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  white-space:nowrap;transition:.15s}
+.ibdp-back:hover{border-color:#2DD4BF;background:rgba(45,212,191,.12)}
+</style>
+</body>
+</html>

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive simulation for IBDP Computer Science A1.2.2 - how binary is used to store text, images, audio, video and numbers.">
+<style>html,body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Binary Data Lab</title>
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#080B12; --panel:#101624; --panel2:#151D2E; --line:#22304A;
+  --fg:#E9EFF8; --muted:#90A0BC; --dim:#5B6B87;
+  --teal:#2DD4BF; --blue:#60A5FA; --red:#F87171; --amber:#FBBF24; --violet:#A78BFA; --green:#4ADE80;
+  --navy:#1B3A6B; --brand:#C0392B;
+  --mono:'SF Mono',ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.app{display:flex;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:600px;align-items:stretch;overflow:hidden}
+
+/* ---------- sidebar ---------- */
+.side{flex:0 0 232px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 14px;gap:4px}
+.brandrow{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--blue));display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:700;color:#06121A;letter-spacing:-.5px;flex:none}
+.brandrow h1{font-size:14px;margin:0;font-weight:700;letter-spacing:-.2px;line-height:1.15}
+.code{font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:1px;margin:0 0 16px 40px}
+.navbtn{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;border:1px solid transparent;background:none;color:var(--muted);font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;width:100%;transition:.15s}
+.navbtn:hover{background:var(--panel2);color:var(--fg)}
+.navbtn.on{background:var(--panel2);border-color:var(--line);color:var(--fg)}
+.navbtn .dot{width:7px;height:7px;border-radius:50%;flex:none;background:currentColor;opacity:.85}
+.navbtn .n{font-family:var(--mono);font-size:10px;color:var(--dim);margin-left:auto}
+.spacer{flex:1}
+.playbtn{width:100%;padding:11px;border-radius:10px;border:1px solid var(--teal);background:rgba(45,212,191,.12);color:var(--teal);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.playbtn:hover{background:rgba(45,212,191,.2)}
+.playbtn.live{border-color:var(--amber);background:rgba(251,191,36,.14);color:var(--amber)}
+.sidenote{font-size:10.5px;color:var(--dim);line-height:1.5;margin-top:12px}
+
+/* ---------- stage ---------- */
+.stage{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+.head{padding:22px 28px 14px;border-bottom:1px solid var(--line)}
+.head h2{margin:0 0 5px;font-size:23px;font-weight:800;letter-spacing:-.5px}
+.head p{margin:0;color:var(--muted);font-size:13px;line-height:1.5;max-width:76ch}
+.body{flex:1;min-height:0;overflow:auto;padding:22px 28px 30px}
+.head{flex:none}
+.panel{display:none}
+.panel.on{display:block}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px}
+.card h3{margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted)}
+.card .sub{font-size:11.5px;color:var(--dim);margin:0 0 13px;line-height:1.5}
+
+label.fld{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:6px}
+input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:11px 13px;color:var(--fg);font-family:var(--mono);font-size:19px;letter-spacing:1px}
+input[type=text]:focus{outline:none;border-color:var(--teal)}
+input[type=range]{width:100%;accent-color:var(--teal);margin:2px 0}
+select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--fg);font-family:var(--mono);font-size:12px}
+select:focus{outline:none;border-color:var(--teal)}
+.rowf{display:flex;gap:12px;flex-wrap:wrap}
+.rowf>div{flex:1;min-width:130px}
+
+/* bits */
+.bits{display:flex;gap:4px;flex-wrap:wrap}
+.bit{width:40px;height:50px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);font-size:19px;font-weight:700;border:1px solid var(--line);background:var(--bg);color:var(--dim);transition:.18s;user-select:none}
+.bit .pv{font-size:8.5px;font-weight:600;color:var(--dim);margin-top:2px;letter-spacing:.3px}
+.bit.one{color:#06121A;border-color:transparent}
+.bit.one .pv{color:rgba(0,0,0,.55)}
+.bit.clk{cursor:pointer}
+.bit.clk:hover{border-color:var(--teal)}
+.bit.g-case.one{background:var(--red)}
+.bit.g-pos.one{background:var(--teal)}
+.bit.g-plain.one{background:var(--blue)}
+.bit.g-mark.one{background:var(--violet)}
+.bit.g-cont.one{background:var(--amber)}
+.bit.g-case{border-color:rgba(248,113,113,.4)}
+.bit.g-pos{border-color:rgba(45,212,191,.4)}
+.bit.g-mark{border-color:rgba(167,139,250,.4)}
+.bit.g-cont{border-color:rgba(251,191,36,.4)}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+
+.charcard{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px;margin-bottom:10px}
+.charhead{display:flex;align-items:baseline;gap:12px;margin-bottom:11px;flex-wrap:wrap}
+.glyph{font-family:var(--mono);font-size:27px;font-weight:700;color:var(--fg);line-height:1}
+.meta{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.meta b{color:var(--teal);font-weight:600}
+
+.stat{display:flex;flex-direction:column;gap:3px}
+.stat .k{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--dim);font-weight:700}
+.stat .v{font-family:var(--mono);font-size:21px;font-weight:700;color:var(--fg);letter-spacing:-.5px}
+.stat .v.t{color:var(--teal)} .stat .v.a{color:var(--amber)} .stat .v.b{color:var(--blue)} .stat .v.r{color:var(--red)}
+.stat .u{font-size:10.5px;color:var(--dim)}
+
+.calc{font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:12px 14px;overflow-x:auto;white-space:nowrap}
+.calc b{color:var(--teal);font-weight:600}
+.calc .res{color:var(--amber)}
+
+/* pixel grid */
+.pxwrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.pxgrid{display:grid;gap:2px;background:var(--line);padding:2px;border-radius:6px;flex:none}
+.px{width:19px;height:19px;cursor:pointer;border-radius:2px;transition:.08s}
+.px:hover{outline:1.5px solid var(--teal);outline-offset:-1px}
+.swatchbig{width:84px;height:84px;border-radius:11px;border:1px solid var(--line);flex:none}
+
+/* canvas */
+canvas{width:100%;display:block;border-radius:9px;background:var(--bg);border:1px solid var(--line)}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--dim);padding:7px 9px;border-bottom:1px solid var(--line);font-weight:700}
+td{padding:8px 9px;border-bottom:1px solid rgba(34,48,74,.5);font-family:var(--mono);font-size:12px;color:var(--fg)}
+td.lbl{font-family:var(--sans);color:var(--muted);font-weight:600}
+td.val{color:var(--teal);font-weight:600}
+tr.bad td.val{color:var(--red)}
+td .note{font-family:var(--sans);font-size:10.5px;color:var(--dim)}
+
+.flip{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.frame{width:112px;height:76px;border-radius:8px;border:1px solid var(--line);background:var(--bg);position:relative;overflow:hidden;flex:none}
+.ball{position:absolute;width:17px;height:17px;border-radius:50%;background:var(--teal)}
+.diffpx{position:absolute;background:rgba(248,113,113,.5);border:1px solid var(--red);border-radius:3px}
+.arrow{color:var(--dim);font-size:19px}
+
+.pill{display:inline-block;font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted);margin-right:5px}
+.pill.t{color:var(--teal);border-color:rgba(45,212,191,.4)}
+.pill.a{color:var(--amber);border-color:rgba(251,191,36,.4)}
+
+.cap{border-top:1px solid var(--line);background:var(--panel);padding:14px 28px;display:none;align-items:center;gap:16px}
+.cap.on{display:flex}
+.capnum{font-family:var(--mono);font-size:11px;color:var(--amber);flex:none;font-weight:700}
+.captext{flex:1;font-size:14.5px;line-height:1.5;color:var(--fg)}
+.capbar{position:absolute;left:0;top:0;height:2px;background:var(--amber);transition:width .25s linear}
+.cap{position:relative}
+.capbtns{display:flex;gap:7px;flex:none}
+.mini{padding:6px 11px;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans)}
+.mini:hover{color:var(--fg);border-color:var(--teal)}
+
+.hint{font-size:11.5px;color:var(--dim);line-height:1.6;margin-top:11px}
+.hint b{color:var(--muted)}
+
+@media (max-width:860px){
+  .app{flex-direction:column}
+  .side{flex:none;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px 16px;gap:6px;border-right:none;border-bottom:1px solid var(--line)}
+  .brandrow{width:100%} .code{display:none} .spacer{display:none}
+  .navbtn{width:auto;flex:none;padding:7px 10px;font-size:11.5px} .navbtn .n{display:none}
+  .playbtn{width:auto;flex:none;padding:7px 13px;font-size:11.5px} .sidenote{display:none}
+  .head,.body,.cap{padding-left:16px;padding-right:16px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .head h2{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+
+<div class="app">
+  <nav class="side">
+    <div class="brandrow">
+      <div class="logo">10</div>
+      <h1>Binary Data Lab</h1>
+    </div>
+    <div class="code">A1.2.2</div>
+
+    <button class="navbtn on" data-p="text"><span class="dot" style="color:var(--red)"></span>Text<span class="n">01</span></button>
+    <button class="navbtn" data-p="image"><span class="dot" style="color:var(--teal)"></span>Images<span class="n">02</span></button>
+    <button class="navbtn" data-p="audio"><span class="dot" style="color:var(--amber)"></span>Audio<span class="n">03</span></button>
+    <button class="navbtn" data-p="video"><span class="dot" style="color:var(--violet)"></span>Video<span class="n">04</span></button>
+    <button class="navbtn" data-p="num"><span class="dot" style="color:var(--blue)"></span>Numbers<span class="n">05</span></button>
+
+    <div class="spacer"></div>
+    <button class="playbtn" id="play">▶ Play lesson</button>
+    <p class="sidenote">Every panel is live — change a value and the binary, the maths and the file size all update together.<br><a class="ibdp-back" href="index.html">&larr; All topics</a></p>
+  </nav>
+
+  <section class="stage">
+    <div class="head">
+      <h2 id="ht">How text is stored</h2>
+      <p id="hp">Every character you type is held as a number, and that number is held as binary. ASCII uses one byte per character; Unicode extends the same idea to every writing system on Earth.</p>
+    </div>
+
+    <div class="body">
+
+      <!-- ============ TEXT ============ -->
+      <div class="panel on" id="p-text">
+        <div class="card" style="margin-bottom:16px">
+          <h3>Type anything</h3>
+          <p class="sub">Letters, digits, punctuation, accented characters or emoji — each one is encoded live using the browser's real UTF-8 encoder.</p>
+          <input type="text" id="txt" value="Dubai" maxlength="12" spellcheck="false">
+          <div class="legend">
+            <span><i class="sw" style="background:var(--red)"></i>First 3 bits — case group (011 lower, 010 upper)</span>
+            <span><i class="sw" style="background:var(--teal)"></i>Last 5 bits — position in the alphabet</span>
+            <span><i class="sw" style="background:var(--violet)"></i>UTF-8 lead byte</span>
+            <span><i class="sw" style="background:var(--amber)"></i>UTF-8 continuation byte</span>
+          </div>
+        </div>
+        <div id="chars"></div>
+        <div class="grid3" style="margin-top:16px">
+          <div class="card"><div class="stat"><span class="k">Characters</span><span class="v t" id="t-n">5</span><span class="u">in the string</span></div></div>
+          <div class="card"><div class="stat"><span class="k">Total bytes</span><span class="v a" id="t-b">5</span><span class="u">UTF-8 encoding</span></div></div>
+          <div class="card"><div class="stat"><span class="k">Total bits</span><span class="v b" id="t-bits">40</span><span class="u">8 bits = 1 byte</span></div></div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <h3>Why ASCII was designed this way</h3>
+          <p class="sub" style="margin-bottom:0">ASCII began as a 7-bit code in 1963, giving 2<sup>7</sup> = 128 characters. An 8-bit extension raised that to 2<sup>8</sup> = 256. Unicode (UTF-8) keeps those first 128 codes identical, so every ASCII file is already a valid UTF-8 file — then uses 2, 3 or 4 bytes for everything else. A lead byte starting <b style="color:var(--violet);font-family:var(--mono)">110</b> means two bytes, <b style="color:var(--violet);font-family:var(--mono)">1110</b> means three, <b style="color:var(--violet);font-family:var(--mono)">11110</b> means four, and every continuation byte starts <b style="color:var(--amber);font-family:var(--mono)">10</b>.</p>
+        </div>
+      </div>
+
+      <!-- ============ IMAGE ============ -->
+      <div class="panel" id="p-image">
+        <div class="grid2" style="margin-bottom:16px">
+          <div class="card">
+            <h3>Bitmap canvas — 13 × 10</h3>
+            <p class="sub">Click any pixel to flip its bit. At 1-bit colour depth a pixel is simply 0 (white) or 1 (black).</p>
+            <div class="pxwrap">
+              <div class="pxgrid" id="pxg"></div>
+              <div style="flex:1;min-width:140px">
+                <div class="stat" style="margin-bottom:14px"><span class="k">Pixels set to 1</span><span class="v t" id="i-ones">0</span><span class="u">of 130 total</span></div>
+                <button class="mini" id="i-clear">Clear</button>
+                <button class="mini" id="i-smile">Draw a face</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Colour depth</h3>
+            <p class="sub">Bit depth decides how many distinct colours each pixel can take: colours = 2<sup>depth</sup>.</p>
+            <label class="fld">Bits per pixel — <span id="i-dlbl" style="color:var(--teal)">1 bit</span></label>
+            <input type="range" id="i-depth" min="0" max="5" step="1" value="0">
+            <div class="grid2" style="margin-top:14px;gap:12px">
+              <div class="stat"><span class="k">Colours available</span><span class="v a" id="i-cols">2</span></div>
+              <div class="stat"><span class="k">Typical use</span><span class="v" style="font-size:12.5px;line-height:1.5;font-family:var(--sans);color:var(--muted);font-weight:600" id="i-use">Monochrome graphics</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <h3>File size</h3>
+          <p class="sub">size = width (px) × height (px) × colour depth (bits per pixel)</p>
+          <div class="rowf" style="margin-bottom:13px">
+            <div><label class="fld">Width (px)</label><select id="i-w"><option>13</option><option>640</option><option>800</option><option selected>1920</option><option>3840</option></select></div>
+            <div><label class="fld">Height (px)</label><select id="i-h"><option>10</option><option>480</option><option>600</option><option selected>1080</option><option>2160</option></select></div>
+            <div><label class="fld">Metadata overhead</label><select id="i-meta"><option value="0" selected>None</option><option value="10">+10%</option><option value="25">+25%</option></select></div>
+          </div>
+          <div class="calc" id="i-calc"></div>
+          <p class="hint"><b>Exam note:</b> the raw calculation never matches the real file size. Headers and metadata — dimensions, colour depth, creation date, camera settings — are stored alongside the pixel data.</p>
+        </div>
+
+        <div class="card">
+          <h3>One pixel in 24-bit true colour</h3>
+          <p class="sub">Three channels — red, green and blue — each stored in one byte, giving values 0–255. 2<sup>24</sup> = 16,777,216 colours.</p>
+          <div class="pxwrap">
+            <div class="swatchbig" id="rgb-sw"></div>
+            <div style="flex:1;min-width:230px">
+              <label class="fld">Red — <span id="rl" style="color:var(--red)">216</span></label><input type="range" id="r" min="0" max="255" value="216" style="accent-color:#F87171">
+              <label class="fld" style="margin-top:9px">Green — <span id="gl" style="color:var(--green)">190</span></label><input type="range" id="g" min="0" max="255" value="190" style="accent-color:#4ADE80">
+              <label class="fld" style="margin-top:9px">Blue — <span id="bl" style="color:var(--blue)">199</span></label><input type="range" id="b" min="0" max="255" value="199" style="accent-color:#60A5FA">
+            </div>
+          </div>
+          <div class="calc" style="margin-top:14px" id="rgb-calc"></div>
+        </div>
+      </div>
+
+      <!-- ============ AUDIO ============ -->
+      <div class="panel" id="p-audio">
+        <div class="card" style="margin-bottom:16px">
+          <h3>Analogue to digital conversion</h3>
+          <p class="sub">The blue curve is the continuous analogue sound wave. The dots are samples — amplitude measured at regular intervals. The orange staircase is what actually gets stored, after each sample is rounded to the nearest level its bit depth allows.</p>
+          <canvas id="wave" width="1000" height="260"></canvas>
+          <div class="legend">
+            <span><i class="sw" style="background:var(--blue)"></i>Analogue signal</span>
+            <span><i class="sw" style="background:var(--teal)"></i>Sample points</span>
+            <span><i class="sw" style="background:var(--amber)"></i>Stored digital signal</span>
+          </div>
+        </div>
+        <div class="grid2" style="margin-bottom:16px">
+          <div class="card">
+            <h3>Sample rate</h3>
+            <p class="sub">How many times per second the amplitude is measured, in hertz. More samples give a closer match to the original wave.</p>
+            <label class="fld">Rate — <span id="a-rlbl" style="color:var(--teal)">44,100 Hz (CD quality)</span></label>
+            <input type="range" id="a-rate" min="0" max="4" step="1" value="2">
+          </div>
+          <div class="card">
+            <h3>Bit depth</h3>
+            <p class="sub">How precisely each individual sample is recorded. Levels = 2<sup>depth</sup>.</p>
+            <label class="fld">Depth — <span id="a-dlbl" style="color:var(--amber)">16 bit — 65,536 levels</span></label>
+            <input type="range" id="a-depth" min="0" max="4" step="1" value="3">
+          </div>
+        </div>
+        <div class="card">
+          <h3>Storage required</h3>
+          <div class="rowf" style="margin-bottom:13px">
+            <div><label class="fld">Channels</label><select id="a-ch"><option value="1">1 — mono</option><option value="2" selected>2 — stereo</option></select></div>
+            <div><label class="fld">Duration</label><select id="a-dur"><option value="1" selected>1 second</option><option value="60">1 minute</option><option value="180">3 minutes</option></select></div>
+          </div>
+          <div class="calc" id="a-calc"></div>
+          <p class="hint"><b>Formula:</b> sample rate × bit depth × channels × seconds = total bits. <b>Compression:</b> WAV and AIFF store this raw. MP3 is lossy — it permanently discards sound the ear is least likely to notice. FLAC is lossless — smaller, with nothing thrown away.</p>
+        </div>
+      </div>
+
+      <!-- ============ VIDEO ============ -->
+      <div class="panel" id="p-video">
+        <div class="card" style="margin-bottom:16px">
+          <h3>Video is a sequence of still frames</h3>
+          <p class="sub">Each frame is stored exactly like an image. Played back fast enough — usually 24 to 60 frames per second — they create the illusion of motion, just like a flipbook.</p>
+          <div class="flip">
+            <div class="frame" id="fA"><div class="ball" id="ballA"></div></div>
+            <span class="arrow">→</span>
+            <div class="frame" id="fB"><div class="ball" id="ballB"></div></div>
+            <span class="arrow">→</span>
+            <div class="frame" id="fC"><div class="ball" id="ballC"></div></div>
+            <div style="flex:1;min-width:170px">
+              <label class="fld">Frame rate — <span id="v-flbl" style="color:var(--violet)">30 fps</span></label>
+              <input type="range" id="v-fps" min="1" max="60" value="30">
+              <p class="hint" style="margin-top:7px">Only the ball's position changes between frames — the background is identical. That redundancy is exactly what compression removes.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <h3>Uncompressed storage</h3>
+          <div class="rowf" style="margin-bottom:13px">
+            <div><label class="fld">Resolution</label><select id="v-res">
+              <option value="1280x720">HD 720p — 1280 × 720</option>
+              <option value="1920x1080" selected>Full HD 1080p — 1920 × 1080</option>
+              <option value="2560x1440">Quad HD 1440p — 2560 × 1440</option>
+              <option value="3840x2160">4K Ultra HD — 3840 × 2160</option>
+            </select></div>
+            <div><label class="fld">Duration</label><select id="v-dur"><option value="1">1 second</option><option value="60">1 minute</option><option value="600" selected>10 minutes</option></select></div>
+            <div><label class="fld">Colour depth</label><select id="v-depth"><option value="24" selected>24 bit — true colour</option><option value="30">30 bit — deep colour</option></select></div>
+          </div>
+          <div class="calc" id="v-calc"></div>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <h3>Spatial compression — within one frame</h3>
+            <p class="sub" style="margin-bottom:0">Also called <i>intraframe</i>. Removes redundant detail inside a single frame — reducing colour depth or fine detail the eye will not miss. Works well where each frame carries a lot of changing detail.</p>
+          </div>
+          <div class="card">
+            <h3>Temporal compression — between frames</h3>
+            <p class="sub" style="margin-bottom:11px">Also called <i>interframe</i>. Stores only what changed from the previous frame. In the strip above, that is roughly <span id="v-saved" style="color:var(--teal);font-family:var(--mono);font-weight:700">3%</span> of the pixels instead of all of them.</p>
+            <div class="flip">
+              <div class="frame" style="width:92px;height:62px"><div class="ball" style="width:14px;height:14px;left:12px;top:24px"></div></div>
+              <span class="arrow">−</span>
+              <div class="frame" style="width:92px;height:62px"><div class="ball" style="width:14px;height:14px;left:46px;top:24px"></div></div>
+              <span class="arrow">=</span>
+              <div class="frame" style="width:92px;height:62px"><div class="diffpx" style="left:10px;top:22px;width:18px;height:18px"></div><div class="diffpx" style="left:44px;top:22px;width:18px;height:18px"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ NUMBERS ============ -->
+      <div class="panel" id="p-num">
+        <div class="card" style="margin-bottom:16px">
+          <h3>One byte, seven meanings</h3>
+          <p class="sub">Click the bits. The same eight 1s and 0s decode to completely different numbers depending on which representation system the computer has been told to use.</p>
+          <div class="bits" id="nbits"></div>
+          <div style="margin-top:13px">
+            <button class="mini" id="n-5">+5 → 00000101</button>
+            <button class="mini" id="n-rand">Randomise</button>
+            <button class="mini" id="n-zero">Clear</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Decoded in every system</h3>
+          <table>
+            <thead><tr><th>Representation</th><th>Decodes to</th><th>How it works</th></tr></thead>
+            <tbody id="ntab"></tbody>
+          </table>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <h3>Two's complement — the standard for signed integers</h3>
+          <p class="sub" style="margin-bottom:11px">To negate a number: invert every bit, then add 1 to the least significant bit. The most significant bit ends up acting as the sign — 0 positive, 1 negative — and unlike one's complement and sign-magnitude there is only one representation of zero.</p>
+          <div class="calc" id="tc-calc"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cap" id="cap">
+      <div class="capbar" id="capbar" style="width:0%"></div>
+      <span class="capnum" id="capnum">01 / 18</span>
+      <span class="captext" id="captext"></span>
+      <span class="capbtns">
+        <button class="mini" id="c-prev">Back</button>
+        <button class="mini" id="c-pause">Pause</button>
+        <button class="mini" id="c-next">Next</button>
+        <button class="mini" id="c-stop">Exit</button>
+      </span>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ===================== helpers ===================== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const pad8 = n => n.toString(2).padStart(8,'0');
+const grp = n => n.toLocaleString('en-US');
+function bytesLabel(bits){
+  const B = bits/8;
+  if (B < 1024) return B.toFixed(B%1?2:0)+' B';
+  if (B < 1048576) return (B/1024).toFixed(2)+' kB';
+  if (B < 1073741824) return (B/1048576).toFixed(2)+' MB';
+  return (B/1073741824).toFixed(2)+' GB';
+}
+
+/* ===================== panel routing ===================== */
+const HEADS = {
+  text:['How text is stored','Every character you type is held as a number, and that number is held as binary. ASCII uses one byte per character; Unicode extends the same idea to every writing system on Earth.'],
+  image:['How images are stored','A bitmap image is a grid of pixels. Each pixel’s colour is a binary number, and the number of bits per pixel — the colour depth — sets both the range of colours and the size of the file.'],
+  audio:['How audio is stored','Sound arrives as a continuous analogue wave. An analogue-to-digital converter samples its amplitude at regular intervals and stores each measurement as a binary number.'],
+  video:['How video is stored','Video is a sequence of still frames plus audio, subtitles and metadata. Raw frames are far too large to store directly, so spatial and temporal compression do the heavy lifting.'],
+  num:['How numbers are stored','Eight bits on their own mean nothing. The representation system — unsigned, two’s complement, BCD, Gray code — is what turns a pattern of bits into a value.']
+};
+let cur = 'text';
+function go(p){
+  cur = p;
+  $$('.navbtn').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  $$('.panel').forEach(el => el.classList.toggle('on', el.id === 'p-'+p));
+  $('#ht').textContent = HEADS[p][0];
+  $('#hp').textContent = HEADS[p][1];
+  if (p === 'audio') drawWave();
+}
+$$('.navbtn').forEach(b => b.addEventListener('click', () => { stopLesson(); go(b.dataset.p); }));
+
+/* ===================== TEXT ===================== */
+const enc = new TextEncoder();
+function bitEl(ch, cls){
+  const d = document.createElement('div');
+  d.className = 'bit ' + cls + (ch === '1' ? ' one' : '');
+  d.textContent = ch;
+  return d;
+}
+function renderText(){
+  const s = $('#txt').value;
+  const box = $('#chars');
+  box.innerHTML = '';
+  let totalBytes = 0;
+  for (const chr of s){
+    const bytes = [...enc.encode(chr)];
+    totalBytes += bytes.length;
+    const cp = chr.codePointAt(0);
+    const ascii = bytes.length === 1;
+
+    const card = document.createElement('div');
+    card.className = 'charcard';
+
+    const head = document.createElement('div');
+    head.className = 'charhead';
+    head.innerHTML = '<span class="glyph">' + (chr === ' ' ? '␣' : chr.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))) + '</span>' +
+      '<span class="meta">Unicode <b>U+' + cp.toString(16).toUpperCase().padStart(4,'0') + '</b> &nbsp;·&nbsp; decimal <b>' + grp(cp) + '</b> &nbsp;·&nbsp; ' +
+      (ascii ? 'ASCII — <b>1 byte</b>' : 'UTF-8 — <b>' + bytes.length + ' bytes</b>') + '</span>';
+    card.appendChild(head);
+
+    const bits = document.createElement('div');
+    bits.className = 'bits';
+    bytes.forEach((byte, bi) => {
+      const s8 = pad8(byte);
+      if (ascii){
+        const isLetter = /[A-Za-z]/.test(chr);
+        for (let i = 0; i < 8; i++){
+          bits.appendChild(bitEl(s8[i], isLetter ? (i < 3 ? 'g-case' : 'g-pos') : 'g-plain'));
+        }
+      } else {
+        for (let i = 0; i < 8; i++) bits.appendChild(bitEl(s8[i], bi === 0 ? 'g-mark' : 'g-cont'));
+      }
+      if (bi < bytes.length - 1){
+        const sp = document.createElement('div');
+        sp.style.width = '10px';
+        bits.appendChild(sp);
+      }
+    });
+    card.appendChild(bits);
+
+    const note = document.createElement('p');
+    note.className = 'hint';
+    if (ascii && /[A-Za-z]/.test(chr)){
+      const pos = chr.toLowerCase().charCodeAt(0) - 96;
+      const up = chr === chr.toUpperCase();
+      note.innerHTML = 'Last five bits <b style="font-family:var(--mono);color:var(--teal)">' + pad8(cp).slice(3) +
+        '</b> = ' + pos + ', the position of <b>' + chr + '</b> in the alphabet. First three bits <b style="font-family:var(--mono);color:var(--red)">' +
+        pad8(cp).slice(0,3) + '</b> = ' + (up ? 'uppercase' : 'lowercase') + '.';
+    } else if (ascii && chr === ' '){
+      note.innerHTML = 'Space is <b style="font-family:var(--mono)">00100000</b> — the last five bits are all zero, which is the giveaway.';
+    } else if (ascii){
+      note.innerHTML = 'The first three bits are neither 011 nor 010, so this is a digit, punctuation mark or control character rather than a letter.';
+    } else {
+      const lead = bytes.length === 2 ? '110' : bytes.length === 3 ? '1110' : '11110';
+      note.innerHTML = 'Lead byte starts <b style="font-family:var(--mono);color:var(--violet)">' + lead + '</b> → ' + bytes.length +
+        ' bytes in total. Each continuation byte starts <b style="font-family:var(--mono);color:var(--amber)">10</b>. Strip those markers and the remaining bits rebuild code point ' + grp(cp) + '.';
+    }
+    card.appendChild(note);
+    box.appendChild(card);
+  }
+  $('#t-n').textContent = [...s].length;
+  $('#t-b').textContent = totalBytes;
+  $('#t-bits').textContent = totalBytes * 8;
+}
+$('#txt').addEventListener('input', renderText);
+
+/* ===================== IMAGE ===================== */
+const PW = 13, PH = 10;
+let pxOn = new Array(PW*PH).fill(0);
+const FACE = [29,30,34,35, 42,43,47,48, 80,88, 94,95,96,97,98,99,100];
+function buildGrid(){
+  const g = $('#pxg');
+  g.style.gridTemplateColumns = 'repeat(' + PW + ', 19px)';
+  g.innerHTML = '';
+  for (let i = 0; i < PW*PH; i++){
+    const d = document.createElement('div');
+    d.className = 'px';
+    d.dataset.i = i;
+    d.addEventListener('click', () => { pxOn[i] ^= 1; paintGrid(); });
+    g.appendChild(d);
+  }
+  paintGrid();
+}
+function paintGrid(){
+  const kids = $('#pxg').children;
+  for (let i = 0; i < kids.length; i++) kids[i].style.background = pxOn[i] ? '#E9EFF8' : '#1A2235';
+  $('#i-ones').textContent = pxOn.reduce((a,b) => a+b, 0);
+}
+$('#i-clear').addEventListener('click', () => { pxOn.fill(0); paintGrid(); });
+$('#i-smile').addEventListener('click', () => { pxOn.fill(0); FACE.forEach(i => pxOn[i] = 1); paintGrid(); });
+
+const DEPTHS = [
+  {d:1,  use:'Monochrome graphics'},
+  {d:4,  use:'Early graphics, icons'},
+  {d:8,  use:'GIF, simple web graphics'},
+  {d:16, use:'High colour, some video'},
+  {d:24, use:'True colour — photography'},
+  {d:30, use:'Deep colour — professional'}
+];
+function renderImage(){
+  const sel = DEPTHS[+$('#i-depth').value];
+  $('#i-dlbl').textContent = sel.d + ' bit';
+  $('#i-cols').textContent = sel.d >= 30 ? '1.07 billion' : grp(Math.pow(2, sel.d));
+  $('#i-use').textContent = sel.use;
+
+  const w = +$('#i-w').value, h = +$('#i-h').value, over = +$('#i-meta').value;
+  const bits = w * h * sel.d;
+  const withMeta = bits * (1 + over/100);
+  $('#i-calc').innerHTML =
+    'size = width × height × colour depth<br>' +
+    'size = <b>' + grp(w) + '</b> × <b>' + grp(h) + '</b> × <b>' + sel.d + '</b> = <span class="res">' + grp(bits) + ' bits</span><br>' +
+    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="res">' + grp(bits/8) + ' bytes</span>' + (bits/8 >= 1024 ? ' = <span class="res">' + bytesLabel(bits) + '</span>' : '') +
+    (over ? '<br>+ metadata (' + over + '%) &nbsp;&rarr;&nbsp; <span class="res">' + bytesLabel(withMeta) + '</span>' : '');
+}
+['i-depth','i-w','i-h','i-meta'].forEach(id => $('#'+id).addEventListener('input', renderImage));
+
+function renderRGB(){
+  const r = +$('#r').value, g = +$('#g').value, b = +$('#b').value;
+  $('#rl').textContent = r; $('#gl').textContent = g; $('#bl').textContent = b;
+  const hex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('').toUpperCase();
+  $('#rgb-sw').style.background = hex;
+  $('#rgb-calc').innerHTML =
+    'R <b>' + String(r).padStart(3) + '</b> = <span style="color:var(--red)">' + pad8(r) + '</span>&nbsp;&nbsp;&nbsp;G <b>' + String(g).padStart(3) +
+    '</b> = <span style="color:var(--green)">' + pad8(g) + '</span>&nbsp;&nbsp;&nbsp;B <b>' + String(b).padStart(3) + '</b> = <span style="color:var(--blue)">' + pad8(b) + '</span><br>' +
+    'stored as 24 bits &nbsp;&rarr;&nbsp; <span class="res">' + pad8(r) + ' ' + pad8(g) + ' ' + pad8(b) + '</span><br>' +
+    'hexadecimal &nbsp;&rarr;&nbsp; <span class="res">' + hex + '</span>';
+}
+['r','g','b'].forEach(id => $('#'+id).addEventListener('input', renderRGB));
+
+/* ===================== AUDIO ===================== */
+const RATES = [
+  {hz:8000,  n:'8,000 Hz (telephone)',   vis:7},
+  {hz:22050, n:'22,050 Hz (FM radio)',   vis:13},
+  {hz:44100, n:'44,100 Hz (CD quality)', vis:24},
+  {hz:48000, n:'48,000 Hz (professional)', vis:38},
+  {hz:96000, n:'96,000 Hz (studio master)', vis:64}
+];
+const ADEPTH = [
+  {d:2,  n:'2 bit — 4 levels'},
+  {d:4,  n:'4 bit — 16 levels'},
+  {d:8,  n:'8 bit — 256 levels'},
+  {d:16, n:'16 bit — 65,536 levels'},
+  {d:24, n:'24 bit — 16,777,216 levels'}
+];
+function sig(t){ return 0.62*Math.sin(t*2*Math.PI) + 0.26*Math.sin(t*2*Math.PI*2.4 + 0.8) + 0.12*Math.sin(t*2*Math.PI*5.1); }
+function drawWave(){
+  const c = $('#wave'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height, mid = H/2, amp = H*0.38;
+  ctx.clearRect(0,0,W,H);
+
+  ctx.strokeStyle = '#1A2437'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++){ const y = mid + (i-2)*amp/2; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  ctx.strokeStyle = '#60A5FA'; ctx.lineWidth = 2.5; ctx.beginPath();
+  for (let x = 0; x <= W; x++){ const y = mid - sig(x/W*2)*amp; x ? ctx.lineTo(x,y) : ctx.moveTo(x,y); }
+  ctx.stroke();
+
+  const vis = RATES[+$('#a-rate').value].vis;
+  const levels = Math.pow(2, Math.min(ADEPTH[+$('#a-depth').value].d, 6));
+  const step = W/vis;
+
+  ctx.strokeStyle = '#FBBF24'; ctx.lineWidth = 2; ctx.beginPath();
+  for (let i = 0; i <= vis; i++){
+    const x = i*step;
+    const raw = sig((x/W)*2);
+    const q = Math.round((raw+1)/2*(levels-1))/(levels-1)*2 - 1;
+    const y = mid - q*amp;
+    if (!i) ctx.moveTo(x,y); else { ctx.lineTo(x,y); }
+    ctx.lineTo(Math.min(x+step,W), y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = '#2DD4BF';
+  for (let i = 0; i <= vis; i++){
+    const x = i*step;
+    const raw = sig((x/W)*2);
+    const q = Math.round((raw+1)/2*(levels-1))/(levels-1)*2 - 1;
+    ctx.beginPath(); ctx.arc(x, mid - q*amp, 3.6, 0, 7); ctx.fill();
+  }
+}
+function renderAudio(){
+  const R = RATES[+$('#a-rate').value], D = ADEPTH[+$('#a-depth').value];
+  $('#a-rlbl').textContent = R.n;
+  $('#a-dlbl').textContent = D.n;
+  const ch = +$('#a-ch').value, sec = +$('#a-dur').value;
+  const bits = R.hz * D.d * ch * sec;
+  $('#a-calc').innerHTML =
+    'bits = sample rate × bit depth × channels × seconds<br>' +
+    'bits = <b>' + grp(R.hz) + '</b> × <b>' + D.d + '</b> × <b>' + ch + '</b> × <b>' + grp(sec) + '</b><br>' +
+    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="res">' + grp(bits) + ' bits</span> = ' + grp(bits/8) + ' bytes = <span class="res">' + bytesLabel(bits) + '</span>';
+  drawWave();
+}
+['a-rate','a-depth','a-ch','a-dur'].forEach(id => $('#'+id).addEventListener('input', renderAudio));
+
+/* ===================== VIDEO ===================== */
+let vt = 0, vraf = null;
+function animFrames(){
+  const fps = +$('#v-fps').value;
+  vt += 0.016 * (fps/30);
+  const pos = i => 8 + (Math.sin(vt + i*0.8)*0.5 + 0.5) * 78;
+  ['ballA','ballB','ballC'].forEach((id,i) => {
+    const el = $('#'+id);
+    el.style.left = pos(i) + 'px';
+    el.style.top = (28 + Math.cos(vt*1.3 + i*0.8)*18) + 'px';
+  });
+  vraf = requestAnimationFrame(animFrames);
+}
+function renderVideo(){
+  const fps = +$('#v-fps').value;
+  $('#v-flbl').textContent = fps + ' fps';
+  const [w,h] = $('#v-res').value.split('x').map(Number);
+  const sec = +$('#v-dur').value, depth = +$('#v-depth').value;
+  const perFrame = w*h*depth;
+  const bits = perFrame * fps * sec;
+  $('#v-calc').innerHTML =
+    'one frame = <b>' + grp(w) + '</b> × <b>' + grp(h) + '</b> × <b>' + depth + '</b> = ' + grp(perFrame) + ' bits (' + bytesLabel(perFrame) + ')<br>' +
+    'total = one frame × <b>' + fps + '</b> fps × <b>' + grp(sec) + '</b> s = <span class="res">' + grp(bits) + ' bits</span><br>' +
+    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="res">' + bytesLabel(bits) + '</span> uncompressed';
+}
+['v-fps','v-res','v-dur','v-depth'].forEach(id => $('#'+id).addEventListener('input', renderVideo));
+
+/* ===================== NUMBERS ===================== */
+let nb = [0,0,0,0,0,1,0,1];
+const PV = [128,64,32,16,8,4,2,1];
+function buildBits(){
+  const box = $('#nbits');
+  box.innerHTML = '';
+  nb.forEach((v,i) => {
+    const d = document.createElement('div');
+    d.className = 'bit clk g-plain' + (v ? ' one' : '');
+    d.innerHTML = v + '<span class="pv">' + PV[i] + '</span>';
+    d.addEventListener('click', () => { nb[i] ^= 1; buildBits(); renderNum(); });
+    box.appendChild(d);
+  });
+}
+function grayDecode(bits){
+  let out = [bits[0]];
+  for (let i = 1; i < bits.length; i++) out.push(out[i-1] ^ bits[i]);
+  return parseInt(out.join(''), 2);
+}
+function renderNum(){
+  const s = nb.join(''), v = parseInt(s, 2);
+  const msb = nb[0];
+  const mag = parseInt(s.slice(1), 2);
+
+  const twos = msb ? v - 256 : v;
+  const ones = msb ? -(255 - v) : v;
+  const sm = msb ? -mag : mag;
+  const hi = parseInt(s.slice(0,4), 2), lo = parseInt(s.slice(4), 2);
+  const bcdOK = hi <= 9 && lo <= 9;
+  const gray = grayDecode(nb);
+  const ex = v - 127;
+
+  const rows = [
+    ['Unsigned binary', grp(v), 'Straight place value: ' + PV.filter((p,i) => nb[i]).join(' + ') + (v ? ' = ' + v : '0'), false],
+    ['Two’s complement', grp(twos), msb ? 'MSB is 1 → negative. Value = ' + v + ' − 256 = ' + twos : 'MSB is 0 → positive, same as unsigned. Range −128 to +127', false],
+    ['One’s complement', grp(ones), msb ? 'MSB is 1 → negative. Invert the bits and negate' : 'MSB is 0 → positive. Range −127 to +127, two zeros', false],
+    ['Sign-magnitude', grp(sm), 'MSB = sign (' + (msb ? '1, negative' : '0, positive') + '), remaining 7 bits = magnitude ' + mag, false],
+    ['Binary-coded decimal', bcdOK ? String(hi) + String(lo) : 'invalid', bcdOK ? 'Nibble ' + s.slice(0,4) + ' = ' + hi + ', nibble ' + s.slice(4) + ' = ' + lo : 'A nibble above 1001 (9) is not a valid BCD digit', !bcdOK],
+    ['Gray code', grp(gray), 'Successive values differ by exactly one bit — used in rotary encoders to avoid transition errors', false],
+    ['Excess-127', grp(ex), 'Subtract the bias: ' + v + ' − 127 = ' + ex + '. Makes signed values sort in binary order', false]
+  ];
+  $('#ntab').innerHTML = rows.map(r =>
+    '<tr' + (r[3] ? ' class="bad"' : '') + '><td class="lbl">' + r[0] + '</td><td class="val">' + r[1] + '</td><td><span class="note">' + r[2] + '</span></td></tr>'
+  ).join('');
+
+  const inv = nb.map(b => b^1);
+  let carry = 1, add = inv.slice();
+  for (let i = 7; i >= 0; i--){ const t = add[i] + carry; add[i] = t % 2; carry = t > 1 ? 1 : 0; }
+  $('#tc-calc').innerHTML =
+    'start &nbsp;&nbsp;&nbsp;&nbsp;<b>' + s + '</b> = ' + grp(v) + ' unsigned<br>' +
+    'invert &nbsp;&nbsp;&nbsp;<b>' + inv.join('') + '</b><br>' +
+    'add 1 &nbsp;&nbsp;&nbsp;&nbsp;<span class="res">' + add.join('') + '</span> = ' + grp(parseInt(add.join(''),2) > 127 ? parseInt(add.join(''),2) - 256 : parseInt(add.join(''),2)) + ' in two’s complement';
+}
+$('#n-5').addEventListener('click', () => { nb = [0,0,0,0,0,1,0,1]; buildBits(); renderNum(); });
+$('#n-zero').addEventListener('click', () => { nb = [0,0,0,0,0,0,0,0]; buildBits(); renderNum(); });
+$('#n-rand').addEventListener('click', () => { nb = nb.map(() => Math.random() < 0.5 ? 0 : 1); buildBits(); renderNum(); });
+
+/* ===================== LESSON PLAYER ===================== */
+const SCRIPT = [
+  {p:'text',  t:5.0, c:'Everything inside a computer — every letter, photo, song and film — is stored the same way: as patterns of 1s and 0s.', do:()=>{ $('#txt').value='Dubai'; renderText(); }},
+  {p:'text',  t:5.5, c:'A single character needs eight bits — one byte. Here is the lowercase letter a.', do:()=>{ $('#txt').value='a'; renderText(); }},
+  {p:'text',  t:6.5, c:'The last five bits give the letter’s position in the alphabet. a is the 1st letter, so those bits read 00001.'},
+  {p:'text',  t:6.5, c:'The first three bits say which case it is. 011 means lowercase. Switch to a capital A and they change to 010.', do:()=>{ $('#txt').value='A'; renderText(); }},
+  {p:'text',  t:6.5, c:'ASCII fitted 128 characters into 7 bits. Unicode keeps those codes identical, then uses extra bytes for everything else — accents, other alphabets, emoji.', do:()=>{ $('#txt').value='Aé😀'; renderText(); }},
+  {p:'image', t:5.5, c:'An image is a grid of pixels. Each pixel’s colour is stored as a binary number.', do:()=>{ pxOn.fill(0); FACE.forEach(i=>pxOn[i]=1); paintGrid(); $('#i-depth').value=0; $('#i-w').value='13'; $('#i-h').value='10'; $('#i-meta').value='0'; renderImage(); }},
+  {p:'image', t:6.0, c:'At 1-bit colour depth each pixel is either 0 for white or 1 for black. Two possible colours, because 2 to the power 1 is 2.'},
+  {p:'image', t:6.5, c:'Size is width times height times colour depth. This 13 by 10 image at 1 bit per pixel comes to 130 bits — about 16 bytes.'},
+  {p:'image', t:7.0, c:'Raise the colour depth to 24 bits and every pixel carries a red, a green and a blue byte — 16.8 million possible colours.', do:()=>{ $('#i-depth').value=4; $('#i-w').value='1920'; $('#i-h').value='1080'; renderImage(); }},
+  {p:'image', t:6.5, c:'The same Full HD frame now needs nearly 6 megabytes, and real files add metadata on top. Higher quality always costs storage — that is the trade-off.', do:()=>{ $('#i-meta').value='25'; renderImage(); }},
+  {p:'audio', t:5.5, c:'Sound is analogue — a smooth, continuous wave of changing air pressure. Computers cannot store a smooth curve.', do:()=>{ $('#a-rate').value=0; $('#a-depth').value=0; renderAudio(); }},
+  {p:'audio', t:6.5, c:'So an analogue-to-digital converter samples it: measuring the amplitude at regular intervals and storing each measurement as a number.'},
+  {p:'audio', t:7.0, c:'Raise the sample rate and the stored staircase hugs the original wave far more closely. CD quality takes 44,100 samples every second.', do:()=>{ $('#a-rate').value=2; renderAudio(); }},
+  {p:'audio', t:7.0, c:'Bit depth sets how precisely each sample is recorded. 16 bits gives 65,536 possible levels — and one second of CD stereo needs 1.4 million bits.', do:()=>{ $('#a-depth').value=3; $('#a-ch').value='2'; $('#a-dur').value='1'; renderAudio(); }},
+  {p:'video', t:6.0, c:'Video is just a sequence of still frames — between 24 and 60 of them every second — plus audio, subtitles and metadata.', do:()=>{ $('#v-fps').value=30; $('#v-res').value='1920x1080'; $('#v-dur').value='600'; renderVideo(); }},
+  {p:'video', t:7.0, c:'Stored raw, ten minutes of Full HD would need over a hundred gigabytes. No phone could hold it and no network could stream it.'},
+  {p:'video', t:7.0, c:'Compression fixes that. Spatial compression removes redundant detail inside a frame; temporal compression stores only what changed between frames.'},
+  {p:'num',   t:7.5, c:'Finally: eight bits on their own mean nothing. The representation system decides whether 11111011 is 251, or negative 5.', do:()=>{ nb=[1,1,1,1,1,0,1,1]; buildBits(); renderNum(); }},
+  {p:'num',   t:8.0, c:'Two’s complement is the standard for signed integers — invert every bit, add 1. That is how binary stores text, images, audio and video. A1.2.2 complete.', do:()=>{ nb=[0,0,0,0,0,1,0,1]; buildBits(); renderNum(); }}
+];
+let li = -1, ltimer = null, lstart = 0, lremain = 0, lpaused = false, playing = false;
+
+function showStep(i){
+  li = i;
+  const st = SCRIPT[i];
+  go(st.p);
+  if (st.do) st.do();
+  $('#capnum').textContent = String(i+1).padStart(2,'0') + ' / ' + SCRIPT.length;
+  $('#captext').textContent = st.c;
+  $('#capbar').style.transition = 'none';
+  $('#capbar').style.width = '0%';
+  void $('#capbar').offsetWidth;
+  if (!lpaused){
+    $('#capbar').style.transition = 'width ' + st.t + 's linear';
+    $('#capbar').style.width = '100%';
+  }
+  armTimer(st.t * 1000);
+}
+function armTimer(ms){
+  clearTimeout(ltimer);
+  if (lpaused) return;
+  lstart = Date.now(); lremain = ms;
+  ltimer = setTimeout(() => { li + 1 < SCRIPT.length ? showStep(li+1) : stopLesson(true); }, ms);
+}
+function startLesson(){
+  playing = true; lpaused = false;
+  $('#cap').classList.add('on');
+  $('#play').classList.add('live');
+  $('#play').textContent = '■ Stop lesson';
+  $('#c-pause').textContent = 'Pause';
+  showStep(0);
+}
+function stopLesson(finished){
+  if (!playing) return;
+  playing = false; lpaused = false;
+  clearTimeout(ltimer);
+  $('#cap').classList.remove('on');
+  $('#play').classList.remove('live');
+  $('#play').textContent = '▶ Play lesson';
+}
+$('#play').addEventListener('click', () => playing ? stopLesson() : startLesson());
+$('#c-stop').addEventListener('click', () => stopLesson());
+$('#c-next').addEventListener('click', () => { if (li+1 < SCRIPT.length) showStep(li+1); else stopLesson(); });
+$('#c-prev').addEventListener('click', () => { if (li > 0) showStep(li-1); });
+$('#c-pause').addEventListener('click', () => {
+  if (!playing) return;
+  if (lpaused){
+    lpaused = false;
+    $('#c-pause').textContent = 'Pause';
+    const left = Math.max(400, lremain);
+    $('#capbar').style.transition = 'width ' + (left/1000) + 's linear';
+    $('#capbar').style.width = '100%';
+    armTimer(left);
+  } else {
+    lpaused = true;
+    $('#c-pause').textContent = 'Resume';
+    lremain = lremain - (Date.now() - lstart);
+    clearTimeout(ltimer);
+    const w = getComputedStyle($('#capbar')).width;
+    $('#capbar').style.transition = 'none';
+    $('#capbar').style.width = w;
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && playing) $('#c-next').click();
+  if (e.key === 'ArrowLeft' && playing) $('#c-prev').click();
+  if (e.key === ' ' && playing){ e.preventDefault(); $('#c-pause').click(); }
+  if (e.key === 'Escape') stopLesson();
+});
+
+/* ===================== boot ===================== */
+renderText();
+buildGrid();
+pxOn.fill(0); FACE.forEach(i => pxOn[i] = 1); paintGrid();
+renderImage(); renderRGB(); renderAudio(); renderVideo();
+buildBits(); renderNum();
+animFrames();
+window.addEventListener('resize', () => { if (cur === 'audio') drawWave(); });
+</script>
+
+
+<style>
+.ibdp-back{display:inline-block;margin-top:13px;font-size:11.5px;font-weight:600;
+  color:#2DD4BF;text-decoration:none;font-style:normal}
+.ibdp-back:hover{text-decoration:underline}
+</style>
+</body>
+</html>
